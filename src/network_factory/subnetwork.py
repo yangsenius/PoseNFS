@@ -66,19 +66,27 @@ class Sub_Arch(Meta_Arch):
         #self.final_layer_reduce = [self.Channels[0],self.out_dim]
         if self.vector_in_pixel :
 
+    
             if self.vector_conv_mode=='2D':
 
                 self.final_layer = nn.Sequential(
                     nn.ReLU(inplace=True),
                     nn.Conv2d(self.Channels[0],self.out_dim*self.vector_dim,1,1,0))
 
-            #if self.vector_conv_mode=='3D':
+            if self.vector_conv_mode=='3D':
+                
 
+                self.final_layer = nn.Sequential(
+                    nn.Conv2d(self.Channels[0], self.Channels[0]*self.vector_dim,1,1,0),
+                    nn.ReLU(inplace=True))
+
+                self.final_layer_3d = nn.Conv3d(self.Channels[0],self.out_dim,(1,1,1),(1,1,1),(0,0,0))
         else:
             
             self.final_layer = nn.Sequential(
                 nn.ReLU(inplace=True),
                 nn.Conv2d(self.Channels[0],self.out_dim,1,1,0))
+
         
 
 
@@ -124,17 +132,30 @@ class Sub_Arch(Meta_Arch):
                             # else:
             info = OUTPUTS[0]
         
+        
         OUT  = self.final_layer(info)
 
         if self.vector_in_pixel:
-
-            part_vector = OUT.permute(0,2,3,1) #[N,H,w,kpt_num*vetor_dim]
             
-            part_vector = part_vector.view(part_vector.size(0),part_vector.size(1),part_vector.size(2),-1,self.vector_dim)
+            if self.vector_conv_mode=='2D':
 
-            # squash
-            norm_in_vector = torch.norm(part_vector,dim=-1)  # [N,H,W,kpt_num]
-            squash_prob= norm_in_vector**2/(norm_in_vector**2+1)
-            OUT = squash_prob.permute(0,3,1,2)
+                part_vector = OUT.permute(0,2,3,1) #[N,H,w,kpt_num*vetor_dim]
+            
+                part_vector = part_vector.view(part_vector.size(0),part_vector.size(1),part_vector.size(2),-1,self.vector_dim)
+
+                # squash
+                norm_in_vector = torch.norm(part_vector,dim=-1)  # [N,H,W,kpt_num]
+                squash_prob= norm_in_vector**2/(norm_in_vector**2+1)
+                OUT = squash_prob.permute(0,3,1,2)
+
+            if self.vector_conv_mode=='3D':
+
+                # OUT.size = [N,Channel*vetor_dim,H,W]
+                vector = OUT.view(OUT.size(0),-1, self.vector_dim,OUT.size(2),OUT.size(3))
+                part_vector = self.final_layer_3d(vector)
+                part_vector =part_vector.permute(0,1,3,4,2)  # [N,kpt_num,H,W,dim]
+                norm_in_vector = torch.norm(part_vector,dim=-1) # [N,kpt_num,H,W]
+                squash_prob= norm_in_vector**2/(norm_in_vector**2+1)
+                OUT = squash_prob
 
         return OUT

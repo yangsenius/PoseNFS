@@ -59,11 +59,16 @@ def Constrcut_Cells_Fabrics(depth=8,
                 c_prev_below = c if i==0 else Channels[i-1]
                 c_prev_prev = c if i==0 else Channels[i-1]
 
+
+
                 Cell_Layer.append(Cell( i,j, c, c_prev_parallel, c_prev_above, c_prev_below , c_prev_prev,hidden_num,
                                             operators_used = operators_used))
 
             else:
                 c = Channels[i]
+
+
+
 
                 ################# for cell in prev_parallel #################
                 # means channel from the output of previous-parallel cell
@@ -74,10 +79,14 @@ def Constrcut_Cells_Fabrics(depth=8,
                     c_prev_parallel = Channels[i-1]*N
 
 
+
+
                 ################# for cell in previous-above #################
                 # means channel from the output of previous-above cell
                 # spacial consideration for top cell(0,j)
                 c_prev_above = Channels[i-1]*N       if i!=0 else c_prev_parallel
+
+
 
 
                 ################ for cell in previous-below #################
@@ -90,6 +99,9 @@ def Constrcut_Cells_Fabrics(depth=8,
                     c_prev_below = Channels[i+1]*N     if i<j and i!=num_bound-1 else c_prev_parallel
 
 
+
+
+
                 ################ for cell in previous-previous-parallel  #################
                 if num_bound == depth-j and num_bound<len(tpyes_):# for cell in the tail
                     c_prev_prev = Channels[i]*N
@@ -98,6 +110,9 @@ def Constrcut_Cells_Fabrics(depth=8,
                     # only when j>i and j>1
                     # cell(i,j) has cell(i,j-2) otherwise c_prev_parallel
                     c_prev_prev = Channels[i]*N     if j>i and j>1  else c_prev_parallel
+
+
+
 
 
                 Cell_Layer.append(Cell( i,j, c, c_prev_parallel, c_prev_above, c_prev_below , c_prev_prev,hidden_num,

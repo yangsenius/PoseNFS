@@ -46,7 +46,10 @@ def train(epoch, train_queue, arch_queue ,model,search_arch,criterion,optimizer,
                              weight_optimization_flag = config.train.arch_search_weight_optimization_flag)
 
         
-        backward_loss = model.loss(x, train_heatmap_gt, train_kpt_visible,info=train_info)
+        kpts = model(x)
+        backward_loss = criterion(kpts,train_heatmap_gt.to(kpts.device), train_kpt_visible.to(kpts.device))
+
+        #backward_loss = model.loss(x, train_heatmap_gt, train_kpt_visible,info=train_info)
         
         backward_loss.backward()
 
@@ -88,8 +91,8 @@ def train(epoch, train_queue, arch_queue ,model,search_arch,criterion,optimizer,
             model.backbone._show_alpha(original_value=True)
             model.backbone._show_beta(original_value=True)
         for g in model.groups:
-            g._show_alpha(original_value=True)
-            g._show_beta(original_value=True)
+            g._show_alpha(original_value=False)
+            g._show_beta(original_value=False)
         # #model.groups[0]._show_alpha(original_value=True)
         # model.groups[1]._show_alpha()
         # model.groups[1]._show_beta()

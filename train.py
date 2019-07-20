@@ -34,6 +34,8 @@ def args():
     parser.add_argument('--gpu',            help='gpu ids',                 default = '0,1',                      type =str)
     parser.add_argument('--load_ckpt',      help='reload the last save ckeckpoint in current directory', action='store_true', default=False)
     parser.add_argument('--debug',          help='save batch images ', action='store_true', default=False)
+    parser.add_argument('--num_workers',    help='workers number (debug=0) ', default = 4,                      type =int)
+
     parser.add_argument('--param_flop',     help=' ', action='store_true', default=False)
     parser.add_argument('--show_arch_value',help='show_arch_value ', action='store_true', default=False)
     parser.add_argument('--search'    ,help = 'search method: None,random,sync,second_order_gradient,first_order_gradient',type=str)
@@ -85,7 +87,7 @@ def main():
         assert arg.search in ['None','sync','random','second_order_gradient','first_order_gradient']
         config.train.arch_search_strategy = arg.search
         
-    
+    config.num_workers = arg.num_workers
         
     print('GPU memory : \ntotal | used\n',os.popen(
         'nvidia-smi --query-gpu=memory.total,memory.used --format=csv,nounits,noheader'
@@ -112,13 +114,15 @@ def main():
 
     if arg.param_flop:
         Arch._print_info()
+
     # dump_input = torch.rand((1,3,128,128))
     # graph = SummaryWriter(output_dir+'/log')
     # graph.add_graph(Arch, (dump_input, ))
 
 
-    if len(arg.gpu)>2:
+    if len(arg.gpu)>1:
         use_multi_gpu = True
+        
         Arch = torch.nn.DataParallel(Arch).cuda()
     else:
         use_multi_gpu = False
@@ -129,8 +133,9 @@ def main():
 #        gpu_ids = [int(id) for id in gpu_ids ]
 #        Arch = torch.nn.DataParallel(Arch,device_ids=gpu_ids).cuda()
 #        Search = Search_Arch(Arch.module, config)
-
-    Arch = Arch.cuda()
+    #device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    #Arch.to(device)
+    
     Search = Search_Arch(Arch.module, config) if use_multi_gpu else Search_Arch(Arch, config)# Arch.module for nn.DataParallel
 
     search_strategy = config.train.arch_search_strategy

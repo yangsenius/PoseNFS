@@ -7,7 +7,7 @@ import math
 import numpy as np
 import cv2
 from collections import namedtuple
-
+import matplotlib.pyplot as plt
 
 def save_model(epoch, best, current_result, model, optimizer, scheduler, output_dir, logger):
 
@@ -62,34 +62,36 @@ def visualize_heatamp(input,output,file_name):
     
     input = input.detach().cpu()
     image = input * std + mean
-    output = output.detach().cpu().squeeze().permute(0,3,2,1).numpy()
-    keypoint_channels = output.shape[2]
+    image = image.permute(0,2,3,1).numpy()
+    output = output.detach().cpu().permute(0,2,3,1).numpy()
+    keypoint_channels = output.shape[-1]
    
-
+    print(image.shape,output.shape)
     keypoint_name = {
         0: "nose",1: "L_eye",2: "R_eye",3: "L_ear",4: "R_ear",
         5: "L_shoulder",6: "R_shoulder",7: "L_elbow",8: "R_elbow",9: "L_wrist",10: "R_wrist",
         11: "L_hip",12: "R_hip",13: "L_knee",14: "R_knee",15: "L_ankle",16: "R_ankle" }
 
-    fig=plt.figure()#(figsize=(16,8),constrained_layout=False)
-    #fig.subplots_adjust(top=0.93,bottom=0.075,left=0.0,right=0.985,hspace=0.485,wspace=0.0) #(left=0.03, right=0.97, hspace=0.3, wspace=0.05)
+    fig=plt.figure(figsize=(16,8))#,constrained_layout=True)
+    fig.subplots_adjust(top=0.93,bottom=0.075,left=0.0,right=0.985,hspace=0.485,wspace=0.0) #(left=0.03, right=0.97, hspace=0.3, wspace=0.05)
     
-    fig_lines = keypoint_channels+1
-    fig_rows =  len(output)
+    fig_lines = 3#len(output) 
+    fig_rows =  6#keypoint_channels+1
 
     
     #############    show intergral coordinate and argmax coordinate   ############
     for num in range(len(output)):
-        fig.add_subplot( fig_lines, fig_rows , 1 + num*fig_lines)
+        fig.add_subplot( fig_lines, fig_rows , 1 + num*fig_rows)
         plt.imshow(image[num],cmap='gray') 
 
-        for i in range(keypoint_channels+1):
+        for i in range(keypoint_channels):
 
-            fig.add_subplot( fig_lines, fig_rows , i+2+num*fig_lines,)
+            fig.add_subplot( fig_lines, fig_rows , i+2+num*fig_rows,)
             plt.imshow(output[num,:,:,i], cmap= 'seismic' ,interpolation='lanczos')
             plt.colorbar()
-
-    plt.savefig("debug_detection_heatmap_{}.png".format(file_name),dpi=200,bbox_inches = 'tight')
+            plt.title(keypoint_name[i])
+    plt.show()
+    plt.savefig("debug_detection_heatmap_{}.png".format(file_name))
 
 
 def save_batch_image_with_joints(batch_image, batch_joints, batch_joints_vis,
@@ -287,3 +289,55 @@ def get_model_summary(model, *input_tensors, item_length=26, verbose=False):
         details += "{} : {}   ".format(layer, layer_instances[layer])
 
     return details
+
+
+    # class visualization_heatmaps(object):
+
+
+    # def __init__(self,model,img):
+
+    #     """
+    #     Arg:    model - nn.Module
+    #             img - (3,H,W) torch.tensor.float32
+    #     """
+
+    #     self.model = model.cuda()
+    #     self.img = img.unsqueeze(0).cuda()
+    #     self.inv_transform_std=torch.tensor([0.229, 0.224, 0.225]).unsqueeze(-1).unsqueeze(-1)
+    #     self.inv_transform_mean=torch.tensor([0.485, 0.456, 0.406]).unsqueeze(-1).unsqueeze(-1)
+
+    # def output(self,):
+
+    #     return self.model(self.img)  #[1,k,H/4,W/4]
+    
+    # def vi(self):
+        
+    #     heatmaps = self.output()
+    #     heatmaps = heatmaps.squeeze().cpu().numpy() #[k,H/4,W/4]
+
+    #     img = self.img.cpu() * self.inv_transform_std + self.inv_transform_mean
+    #     img = img.permute(1,2,0).numpy()
+
+
+    #     fig=plt.figure(figsize=(16,8),constrained_layout=False)
+    #     fig.subplots_adjust(top=0.93,bottom=0.075,left=0.0,right=0.985,hspace=0.485,wspace=0.0) #(left=0.03, right=0.97, hspace=0.3, wspace=0.05)
+        
+    #     fig_lines = 3
+    #     fig_rows = 6
+
+    #     fig.add_subplot( fig_lines, fig_rows , 1)
+        
+    #     plt.imshow(img,cmap='gray')   
+
+    #     plt.title('image')
+        
+    #     keypoint_channels = len(heatmaps)
+    
+    #     #############   show heatmaps   ############
+    #     for i in range(keypoint_channels):
+    #         fig.add_subplot( fig_lines, fig_rows , i+2,)
+    #         plt.imshow(heatmaps[i,:,:], cmap= 'seismic' ,interpolation='lanczos')#,vmin=0,vmax=1) # coolwarm seismic magma viridis tab20b  interpolation=' lanczos'
+    #         plt.colorbar()
+
+    #     plt.show() 
+          

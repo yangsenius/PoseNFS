@@ -10,9 +10,7 @@ data_normalize = torchvision.transforms.Compose([
                                     torchvision.transforms.Normalize(
                                         mean=[0.485, 0.456, 0.406],
                                         std=[0.229, 0.224, 0.225])])
-num_workers = 4
-pin_memory = True
-logger.info("\n num_workers of dataloader is {}".format(num_workers))
+
     
 def Dataloaders(search_strategy,config):
 
@@ -71,6 +69,11 @@ def split_for_nas(train_dataset,valid_dataset,config,split_for_train=2,split_for
     logger.info("batchsize  for train={} val={}(train for arch_parameters)".format(train_batch,valid_batch))
     logger.info("iterations for train={} val={}(train for arch_parameters)".format(train_iters,valid_iters))
 
+
+    num_workers = config.num_workers
+    pin_memory = True
+    logger.info("\n num_workers of dataloader is {}".format(num_workers))
+
     train_queue = torch.utils.data.DataLoader(train_dataset, 
                 batch_size = train_batch, num_workers = num_workers,   pin_memory=pin_memory ,
                 sampler=torch.utils.data.sampler.SubsetRandomSampler(data_nums[:train_split]), )
@@ -86,7 +89,10 @@ def split_for_nas(train_dataset,valid_dataset,config,split_for_train=2,split_for
 
 
 def normal_dataloader(train_dataset,valid_dataset,config):
-
+    
+    num_workers = config.num_workers
+    pin_memory = True
+    logger.info("\n num_workers of dataloader is {}".format(num_workers))
     train_queue = torch.utils.data.DataLoader(train_dataset, 
                 batch_size = config.train.batchsize, num_workers = num_workers ,   pin_memory=pin_memory , shuffle = True)
 

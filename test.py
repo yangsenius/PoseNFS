@@ -37,6 +37,8 @@ def args():
     parser.add_argument('--use_dt',       help='if use detection results or',  action='store_true' ,default= False )
     parser.add_argument('--flip_test',       help='',  action='store_true' ,default= False )
     parser.add_argument('--test_model',       help='test model',  type=str  )
+    parser.add_argument('--param_flop',     help=' ', action='store_true', default=False)
+    
     parser.add_argument('--gpu',       help='gpu ids',  type=str  )
     parser.add_argument('--margin',       help='margin_to_border',  type=float ,default= 1.25 )
 
@@ -73,7 +75,7 @@ def main():
     config = edict( yaml.load( open(arg.cfg,'r')))
 
     config.test.flip_test = arg.flip_test
-    config.test.batchsize = 128
+    config.test.batchsize = 16
     config.model.margin_to_border = arg.margin
 
 
@@ -86,12 +88,18 @@ def main():
 
     Arch = bulid_up_network(config,criterion)
 
+    if arg.param_flop:
+        Arch._print_info()
     
     logger.info("=========>current architecture's values before evaluate")
+
     if hasattr(Arch.backbone,"alphas"):
+
         Arch.backbone._show_alpha()
         Arch.backbone._show_beta()
+
     for id,group in enumerate(Arch.groups):
+
         group._show_alpha()
         group._show_beta()
    
@@ -115,8 +123,6 @@ def main():
     
     Arch = torch.nn.DataParallel(Arch).cuda()
     
-    
-
     valid_dataset = dataset_(config,config.images_root_dir,
                             config.annotation_root_dir,
                             mode='val',
@@ -132,7 +138,7 @@ def main():
     valid_dt_dataset =dataset_(config,config.images_root_dir,
                             config.person_detection_results_path,
                             mode='dt',
-                            dataset = 'test', # Note : choose your test set: val or test!
+                            dataset = 'test',
                             transform=torchvision.transforms.Compose([
                                 torchvision.transforms.ToTensor(),
                                 torchvision.transforms.Normalize(
@@ -141,12 +147,28 @@ def main():
                             ]))
 
     if arg.use_dt:
-        logger.info("\n>>>use detection results ")
+
+        logger.info("\n >>> use detection results ")
         valid_dataloader = torch.utils.data.DataLoader(valid_dt_dataset, batch_size = config.test.batchsize, shuffle = False , num_workers = 4 , pin_memory=True )
+    
     else:
-        logger.info("\n>>>use groundtruth bbox ")
+
+        logger.info("\n >>> use groundtruth bbox ")
         valid_dataloader = torch.utils.data.DataLoader(valid_dataset, batch_size = config.test.batchsize, shuffle = False , num_workers = 4 , pin_memory=True )
 
+    for i in range(len(valid_dataset)):
+        #print(valid_dataset[i][1])
+        if valid_dataset[i][1]!=185250:
+            continue
+        print(valid_dataset[i][1])
+        sample = valid_dataset[i]
+    
+        img = sample[0].unsqueeze(0)
+        #samples = next(iter(valid_dataloader))
+        #img = samples[0]
+        output = Arch(img)
+        print(img.size(),output.size())
+        visualize_heatamp(img,output,'heatmaps')
 
     results = evaluate( Arch, valid_dataloader , config, output_dir)
     logger.info('map = {}'.format(results))

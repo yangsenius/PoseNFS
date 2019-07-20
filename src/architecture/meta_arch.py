@@ -25,6 +25,25 @@ logger = logging.getLogger(__name__)
 # j denotes layer depth.
 
 
+'''
+class Stem(nn.Module):
+    "default: the output resolution is 1/4 of input "
+    def __init__(self,in_dim,out_dim):
+        super(Stem,self).__init__()
+        self.stem = nn.Sequential(
+            nn.Conv2d(in_dim, 64, kernel_size=3, stride=2, padding=1, bias=False),
+            nn.BatchNorm2d(64, momentum=0.1),
+
+            nn.Conv2d(64, 64, kernel_size=3, stride=2, padding=1,bias=False),
+            nn.BatchNorm2d(64, momentum=0.1),
+            nn.ReLU(inplace=True),
+
+            nn.Conv2d(64, out_dim, kernel_size=1, stride=1, padding=0,bias=False))
+
+        def forward(self,x):
+            return self.stem(x)'''
+
+
 class Meta_Arch(nn.Module):
 
     def __init__(self,out_dim,criterion,name="meta",**Cell_Config):
@@ -60,6 +79,17 @@ class Meta_Arch(nn.Module):
         cell_fabrics = Constrcut_Cells_Fabrics( depth=self.arch_depth,  tpyes_=self.cell_size_types, 
                                                 Channels=self.Channels, hidden_num=self.N, operators_used=self.operators_used )
 
+        #self.cell_fabrics = nn.ModuleList()
+        #Num = [] # Num is a list store the number of cells in each layer j
+        #for layer in cell_fabrics:
+        #    l = nn.ModuleList()
+        #    Num.append(len(layer))
+        #    for cell in layer:
+        #        l.append(cell)
+        #    self.cell_fabrics.append(l)
+
+        ###########
+
         self.cell_fabrics =[]
         cell_id = 1
         Num = [] # Num is a list store the number of cells in each layer j
@@ -73,7 +103,7 @@ class Meta_Arch(nn.Module):
                 l.append(eval('self.'+'cell_{}_{}'.format(i,j)))
                 cell_id += 1
 
-            self.cell_fabrics.append(l)
+            #　self.cell_fabrics.append(l)　　multi-gpu bugs
 
         ############
         self.Num = Num # N is a list store the number of cells in each layer j

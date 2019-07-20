@@ -7,6 +7,8 @@ from architecture.operators import OPS , Connections , ReLUConvBN
 
 prev_prev_skip = False
 
+
+
 # Ops_Combination is inside the cell
 
 class Ops_Combination(nn.Module):
@@ -33,6 +35,9 @@ class Ops_Combination(nn.Module):
         output = len(self.ops_used) *sum([alpha * op(input) for alpha, op in zip(alphas, self.ops)]) #len_use
         return output
 
+
+
+
 # Connection_Combination is outside the cell
 
 class Connection_Combination(nn.Module):
@@ -44,7 +49,9 @@ class Connection_Combination(nn.Module):
     def forward(self,  prev_parallel, prev_above, prev_below ,betas):
 
         betas = F.softmax(betas,dim=-1)
-        mix = F.relu(3*betas[0] * prev_parallel + 3*betas[1] *  prev_above + 3*betas[2] *  prev_below )  # *3
+        mix = 3*betas[0] * prev_parallel + 3*betas[1] *  prev_above + 3*betas[2] *  prev_below   # *3
+
+        mix = F.relu(mix)
 
         return mix
 
@@ -57,12 +64,10 @@ class Cell(nn.Module):
         pos_i   :   determine the spatial size of the cell
         pos_j   :   determine the layer depth of the cell
         c       :   the channel of hidden states in current cell
-        c_prev_parallel    	 :   the channel of hidden states in prev_parallel  cell
-        c_prev_above   		 :   the channel of hidden states in prev_above     cell 
-	    c_prev_below  	  	 :   the channel of hidden states in prev_below     cell 
-	    c_prev_prev		     :   the channel of hidden states in prev_prev      cell 
+        c_p     :   the channel of hidden states in previous cell
+        c_pp    :   the channel of hidden states in previous previous cell
 
-        input_nodes_num     :   the number of input_nodes = 1
+        input_nodes_num     :   the number of input_nodes = 2
         hidden_states_num   :   the number of hidden_states = 2
        
     
@@ -73,7 +78,7 @@ class Cell(nn.Module):
             
 
     alpha,          [k, ops_num]   k = total opertation edge in the cell
-    beta,           [cell_nums, connection_num]
+    beta,           [connection_num]
 
             
 
@@ -84,7 +89,7 @@ class Cell(nn.Module):
     """
 
     def __init__(self,pos_i,pos_j, c,  c_prev_parallel, c_prev_above, c_prev_below , c_prev_prev ,hidden_states_num ,
-                                                        input_nodes_num = 1, 
+                                                        input_nodes_num = 2, 
                                                         skip = prev_prev_skip,
                                                         operators_used = ["zero"]):
         
@@ -133,11 +138,16 @@ class Cell(nn.Module):
                 mix_ops = Ops_Combination(c,operators_used)
                 self.cell_arch.append(mix_ops)
 
-    
-    def forward(self, prev_paral, prev_above, prev_below , alphas,  betas, prev_prev=None ,other_input=None):
+    def forward(self, prev_paral, prev_above, prev_below , prev_prev, alphas,  betas, other_input=None):
+        
         # beta control
+        
+        prev_paral = self.propress_list[0](prev_paral)
+        prev_above = self.propress_list[1](prev_above)
+        prev_below = self.propress_list[2](prev_below)
+        
         states = []
-        input_node_1 = self.cell_connections(self.propress_list[0](prev_paral), self.propress_list[1](prev_above), self.propress_list[2](prev_below) ,betas  )
+        input_node_1 = self.cell_connections(prev_paral, prev_above, prev_below ,betas  )
         states.append(input_node_1)
 
         if self.skip : # prev_prev_cell's input 
@@ -166,7 +176,9 @@ class Cell(nn.Module):
             output_node = torch.cat(states[-self.steps:], dim = 1)
         else:
             output_node = states[-1]
+
             # c*hidden_states_num  -> c 
         output_node = self.channel_keep(output_node)
         
+
         return output_node

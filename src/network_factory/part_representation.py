@@ -34,7 +34,7 @@ class Body_Part_Representation(nn.Module):
 
         logger.info("\nbody parts is {}".format(self.parts))
 
-        self.groups = []
+        self.groups = [] #nn.ModuleList()
 
         for part_name in self.parts:
             keypoints_num = len(self.parts[part_name])
@@ -51,6 +51,7 @@ class Body_Part_Representation(nn.Module):
                                     **subnetwork_config['cell_config']))
 
                 self.groups.append(eval('self.'+'{}'.format(part_name)))
+                
         
         # consider for the backbone's feature map channels are too large
         with torch.no_grad():
@@ -79,28 +80,30 @@ class Body_Part_Representation(nn.Module):
                 group_reduce_conv = nn.ModuleList()
                 for id,f in enumerate(feature):
                     group_reduce_conv.append(
-                        nn.Conv2d(f.size(1), cell_channel[id],1,1,0) )
+                        nn.Conv2d(f.size(1), cell_channel[id],1,1,0))
                 self.reduce.append(group_reduce_conv)
             else:
                 self.reduce.append(None)
     
-
-
     def forward(self,x):
-    
-        output = torch.zeros(x.size(0),self.out_dim, x.size(2)//4, x.size(3)//4,device=x.device) 
+
+        
+        output = torch.zeros(x.size(0),self.out_dim, x.size(2)//4, x.size(3)//4).to(x.device)
+       
         shared_feature = self.backbone(x)
-        for id in range(len(self.groups)):
+
+        for id,part_name in enumerate(self.parts):
+            
             if self.reduce_flag[id]==True:
                 f = [self.reduce[id][f_id](ff) for f_id,ff in enumerate(shared_feature)]
+                
             else:
                 f = shared_feature
+  
+
+            output[:,self.parts[part_name],:,:] += eval('self.'+'{}'.format(part_name))(f)
             
-            part_name = self.groups[id].arch_name # part name
-            output[:,self.parts[part_name],:,:] += self.groups[id](f)
-        
         return output
-    
 
     def new(self):
         """

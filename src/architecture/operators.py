@@ -74,8 +74,8 @@ class Downsample_Connection(nn.Module):
         super(Downsample_Connection,self).__init__()
         self.operation = nn.Sequential(
             nn.Conv2d(channel_in, channel_out, 3, stride = 2, padding= 1 ),
-            nn.BatchNorm2d(channel_out,momentum=0.1),)
-            #nn.ReLU(inplace=True)) # addd
+            nn.BatchNorm2d(channel_out,momentum=0.1),
+            nn.ReLU(inplace=True)) # addd
 
     def forward(self,x):
 
@@ -135,18 +135,18 @@ class Upsample_Connection(nn.Module):
         self.bn = nn.BatchNorm2d(C_out,momentum=0.1)
         assert C_out % 2 ==0
         self.factor = factor
-
-    # def forward(self , x):
-    #     x = self.conv_1x1(x)
-    #     x = self.bn(x)
-    #     x = torch.nn.functional.interpolate(x,  scale_factor = self.factor,
-    #                                             mode = 'bilinear',align_corners = True)
-
-    #     return x
+        self.ups = nn.UpsamplingBilinear2d(scale_factor=factor)
     def forward(self , x):
-        x = torch.nn.functional.interpolate(self.bn( self.conv_1x1(x)),  scale_factor = self.factor,
-                                                mode = 'bilinear',align_corners = True)
-
+        #x = self.conv_1x1(x)
+        #x = self.bn(x)
+       
+        #print('zzz',self.conv_1x1.__class__.__name__,self.conv_1x1.weight.device,x.device)
+        
+        x = torch.nn.functional.interpolate(self.bn(self.conv_1x1(x)),  scale_factor = self.factor,
+                                               mode = 'bilinear',align_corners = True)
+    
+        
+    
         return x
 
 class ReLUConvBN(nn.Module):

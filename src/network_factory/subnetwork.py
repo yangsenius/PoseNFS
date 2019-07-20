@@ -39,7 +39,8 @@ class Sub_Arch(Meta_Arch):
                 if i < cell_config['cut_layers_num']:
                     # delete cell in the range of (0,cut_layers_num)
                     # delele the attribute : self.cell_i_j (cell(nn.Module))
-                    self.cell_fabrics[i][j]=None
+
+                    # self.cell_fabrics[i][j]=None  multi-gpus bugs
                     delattr(self,"cell_{}_{}".format(i,j))
                     self.Num[i] =0
 
@@ -66,63 +67,66 @@ class Sub_Arch(Meta_Arch):
         #self.final_layer_reduce = [self.Channels[0],self.out_dim]
         if self.vector_in_pixel :
 
-    
             if self.vector_conv_mode=='2D':
 
                 self.final_layer = nn.Sequential(
                     nn.ReLU(inplace=True),
                     nn.Conv2d(self.Channels[0],self.out_dim*self.vector_dim,1,1,0))
 
-            if self.vector_conv_mode=='3D':
-                
+            #if self.vector_conv_mode=='3D':
 
-                self.final_layer = nn.Sequential(
-                    nn.Conv2d(self.Channels[0], self.Channels[0]*self.vector_dim,1,1,0),
-                    nn.ReLU(inplace=True))
-
-                self.final_layer_3d = nn.Conv3d(self.Channels[0],self.out_dim,(1,1,1),(1,1,1),(0,0,0))
         else:
             
             self.final_layer = nn.Sequential(
                 nn.ReLU(inplace=True),
                 nn.Conv2d(self.Channels[0],self.out_dim,1,1,0))
-
         
 
-
+    ### put the feature map as the input of different body part module (or add extra_information from head or upper_limb part)
     def forward(self,f,extra_information=None):
-
         # Num indicate cell numbers in each layer
         # we use it to judge  prev_paral,prev_below,prev_prev
         Num = self.Num
+
+        prev_prev_layer = [c for c in f]
         prev_layer = [c for c in f]
 
         # cell_fabrics = [layer1 , layer2, layer3,...]
         cell_id = 0
         for j in range(self.cut_layers_num,self.arch_depth): # begin from cut_layers_num
 
-            layer = self.cell_fabrics[j]
+            # layer = self.cell_fabrics[j]
+
             OUTPUTS = []
 
-            for i, cell in enumerate( layer):
-
+            for i in range(self.Num[j]): # the number of cells in j-th layer of cell-fabric
+                
+                cell = eval('self.cell_{}_{}'.format(j,i))  # the j-th layer i-th scale of cell-fabric
+                
                  # cells in layer 1,2 ,3 are replaced by resnet
                 if i<Num[j-1]:
                 # if prev_cell exist
                 #if i<Num[j-1]:
+
                     prev_paral = prev_layer[i]
                 else :
                     prev_paral = prev_layer[i-1] # else for bottom cell
 
                 prev_above = prev_layer[i-1] if i!=0 else prev_paral # else for top cell
                 prev_below = prev_layer[i+1] if i<Num[j-1]-1 else prev_paral # if for cell above the diagnoal
-       
-                output = cell(prev_paral, prev_above, prev_below ,
+                prev_prev = prev_prev_layer[i] if j>2 and j>i else prev_paral # if for 2 cell !!!
+
+                #prev_prev = prev_prev_layer[i] if i<Num[j-2] else prev_paral
+                #prev_prev = torch.zeros_like(prev_prev) # cancel prev_prev!!
+                
+                output = cell(prev_paral, prev_above, prev_below , prev_prev,
                                 self.alphas, self.betas[cell_id])
                 cell_id += 1
-
+                
                 OUTPUTS.append(output)
                 #prev_layer.append(output)
+
+            prev_prev_layer = prev_layer
             prev_layer = OUTPUTS
 
              # final OUPUTS are upsampling to the 1/4 spatial size and concatenated
@@ -131,31 +135,18 @@ class Sub_Arch(Meta_Arch):
                             #     info = torch.cat([OUTPUTS[0],extra_information],dim=1)
                             # else:
             info = OUTPUTS[0]
-        
-        
+
         OUT  = self.final_layer(info)
 
         if self.vector_in_pixel:
-            
-            if self.vector_conv_mode=='2D':
 
-                part_vector = OUT.permute(0,2,3,1) #[N,H,w,kpt_num*vetor_dim]
+            part_vector = OUT.permute(0,2,3,1) #[N,H,w,kpt_num*vetor_dim]
             
-                part_vector = part_vector.view(part_vector.size(0),part_vector.size(1),part_vector.size(2),-1,self.vector_dim)
+            part_vector = part_vector.view(part_vector.size(0),part_vector.size(1),part_vector.size(2),-1,self.vector_dim)
 
                 # squash
-                norm_in_vector = torch.norm(part_vector,dim=-1)  # [N,H,W,kpt_num]
-                squash_prob= norm_in_vector**2/(norm_in_vector**2+1)
-                OUT = squash_prob.permute(0,3,1,2)
-
-            if self.vector_conv_mode=='3D':
-
-                # OUT.size = [N,Channel*vetor_dim,H,W]
-                vector = OUT.view(OUT.size(0),-1, self.vector_dim,OUT.size(2),OUT.size(3))
-                part_vector = self.final_layer_3d(vector)
-                part_vector =part_vector.permute(0,1,3,4,2)  # [N,kpt_num,H,W,dim]
-                norm_in_vector = torch.norm(part_vector,dim=-1) # [N,kpt_num,H,W]
-                squash_prob= norm_in_vector**2/(norm_in_vector**2+1)
-                OUT = squash_prob
+            norm_in_vector = torch.norm(part_vector,dim=-1)  # [N,H,W,kpt_num]
+            squash_prob= norm_in_vector**2/(norm_in_vector**2+1)
+            OUT = squash_prob.permute(0,3,1,2)
 
         return OUT

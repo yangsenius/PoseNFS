@@ -1,5 +1,3 @@
-# Copyright (c) SEU - PatternRec
-# Licensed under the MIT License.
 # Written by Sen Yang (yangsenius@seu.edu.cn)
 
 import torch
@@ -40,7 +38,8 @@ def args():
     parser.add_argument('--param_flop',     help=' ', action='store_true', default=False)
     
     parser.add_argument('--gpu',       help='gpu ids',  type=str  )
-    parser.add_argument('--margin',       help='margin_to_border',  type=float ,default= 1.25 )
+    parser.add_argument('--margin',       help='margin_to_border',  type=float ,default= 1.15 )
+    parser.add_argument('--debug',       help='visualize',  action='store_true' ,default= False )
 
     args = parser.parse_args()
     return args
@@ -75,7 +74,7 @@ def main():
     config = edict( yaml.load( open(arg.cfg,'r')))
 
     config.test.flip_test = arg.flip_test
-    config.test.batchsize = 16
+    config.test.batchsize = 128
     config.model.margin_to_border = arg.margin
 
 
@@ -120,6 +119,14 @@ def main():
 
     #logger.info(Arch.backbone.alphas)
 
+    logger.info("=========>Architecture's parameters")
+    if hasattr(Arch,"backbone"):
+        if hasattr(Arch.backbone,"alphas"):
+            Arch.backbone._show_alpha(original_value=False)
+            Arch.backbone._show_beta(original_value=False)
+        for g in Arch.groups:
+            g._show_alpha(original_value=False)
+            g._show_beta(original_value=False)
     
     Arch = torch.nn.DataParallel(Arch).cuda()
     
@@ -138,7 +145,7 @@ def main():
     valid_dt_dataset =dataset_(config,config.images_root_dir,
                             config.person_detection_results_path,
                             mode='dt',
-                            dataset = 'test',
+                            dataset = config.test.dataset_name,
                             transform=torchvision.transforms.Compose([
                                 torchvision.transforms.ToTensor(),
                                 torchvision.transforms.Normalize(
@@ -155,20 +162,22 @@ def main():
 
         logger.info("\n >>> use groundtruth bbox ")
         valid_dataloader = torch.utils.data.DataLoader(valid_dataset, batch_size = config.test.batchsize, shuffle = False , num_workers = 4 , pin_memory=True )
-
-    for i in range(len(valid_dataset)):
-        #print(valid_dataset[i][1])
-        if valid_dataset[i][1]!=185250:
-            continue
-        print(valid_dataset[i][1])
-        sample = valid_dataset[i]
     
-        img = sample[0].unsqueeze(0)
-        #samples = next(iter(valid_dataloader))
-        #img = samples[0]
-        output = Arch(img)
-        print(img.size(),output.size())
-        visualize_heatamp(img,output,'heatmaps')
+    if arg.debug:
+      for i in range(len(valid_dataset)):
+          #print(valid_dataset[i][1])
+          # choose an image_id
+          if valid_dataset[i][1]!=185250:
+              continue
+          print(valid_dataset[i][1])
+          sample = valid_dataset[i]
+
+          img = sample[0].unsqueeze(0)
+          #samples = next(iter(valid_dataloader))
+          #img = samples[0]
+          output = Arch(img)
+          print(img.size(),output.size())
+          visualize_heatamp(img,output,'heatmaps')
 
     results = evaluate( Arch, valid_dataloader , config, output_dir)
     logger.info('map = {}'.format(results))

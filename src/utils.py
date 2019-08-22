@@ -87,7 +87,7 @@ def visualize_heatamp(input,output,file_name):
         for i in range(keypoint_channels):
 
             fig.add_subplot( fig_lines, fig_rows , i+2+num*fig_rows,)
-            plt.imshow(output[num,:,:,i], cmap= 'seismic' ,interpolation='lanczos')
+            plt.imshow(output[num,:,:,i], cmap= 'jet' ,interpolation='lanczos') # jet seismic
             plt.colorbar()
             plt.title(keypoint_name[i])
     plt.show()

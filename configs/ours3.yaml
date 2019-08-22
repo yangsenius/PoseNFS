@@ -1,0 +1,135 @@
+model:
+    use_pretrained: false
+    pretrained: ''
+    use_backbone: True
+    frozen_resnet: False
+    frozen_mobilenet: False
+    backbone_net_name: 'resnet'  # or 'meta_arch' or 'mobilenet_v2'
+    backbone_layers: 50 #resnet
+    backbone_feature_num: 4 # resnet
+    backbone_pretrained_path: '/data1/public_dataset/resnet_pretrained/resnet50-19c8e357.pth'
+    init_weights: True
+
+    dataset_name: 'coco'
+    keypoints_num: 17
+
+
+    input_size:
+        w: 192
+        h: 256
+    heatmap_size:
+        w: 48
+        h: 64
+
+    margin_to_border: 1.15 # >=1
+
+    embedding: False
+    squash: True
+    ## use an extra mask module branch or only add a channel to
+    use_mask: false
+    mask_num: 0
+
+    backbone:
+
+        frozen_backbone: false #
+        search_alpha: True
+        search_beta: True
+        operators: ["Zero", "skip_connect", "Sep_Conv_3x3", "Atr_Conv_3x3","avg_pool_3x3","max_pool_3x3"]
+
+        reserve_layers_num: 4  # only use first 4 layers
+        depth: 12
+        size_types: [4,8,16,32]
+        hidden_states_num: 1
+        factor: 10
+        input_nodes_num: 1
+
+    subnetwork_config:
+
+        dataset_name: 'coco'
+        parts_num : 3
+        cell_config:
+        
+            ##### vector representation
+            vector_in_pixel : True
+            vector_dim: 8
+            convolution_mode: '2D'
+            ##### vector representation
+
+            search_alpha: true
+            search_beta: true
+            operators: ["skip_connect", "Sep_Conv_3x3","Atr_Conv_3x3","max_pool_3x3"]  #'conv_3x3'] # "Atr_Conv_3x3"
+ 
+            depth: 7
+            cut_layers_num: 4  # first several layers
+            size_types: [4,8,16,32]
+            hidden_states_num: 1
+            factor: 16
+            input_nodes_num: 1
+
+
+images_root_dir: '/data1/public_dataset/coco/images/'
+annotation_root_dir: '/data1/public_dataset/coco/annotations/'
+person_detection_results_path: '/data1/public_dataset/coco/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'
+
+
+#COCO_test-dev2017_detections_AP_H_609_person
+#COCO_val2017_detections_AP_H_56_person.json
+
+train:
+    batchsize: 20
+
+    #filter_arch_parameters: True # do not update arch_parameters when update weight in trainset
+
+    random_seed : 2 # for random search
+    arch_search_strategy: sync # 'first_order_gradient','random','None','second_order_gradient'
+    arch_search_epoch: 0
+    arch_search_weight_optimization_flag: false # this need more consideration
+
+
+    epoch_begin: 0
+    epoch_end: 200
+
+    w_optim_name: 'Adam'
+    w_momentum: 0.9
+    w_lr_cosine_begin: 0.001
+    w_lr_cosine_end : 0.00005
+    w_weight_decay: 0.0003
+
+    # FOR MultiStepLR
+    scheduler_name: CosineAnnealingLR  #MultiStepLR
+    LR_STEP: [30,60,80,130]
+
+    LR_FACTOR: 0.25
+
+    # two values below make the trainset splited by split_for_train/split_for_archvalid
+    
+    split_for_train: 2
+    split_for_archvalid: 1
+
+    arch_optim_name: 'Adam'
+    arch_lr: 0.03
+    arch_weight_decay: 0.01
+
+    heatmap_peak_sigma_factor: 2
+
+    augmentation: true
+    aug_scale: 0.30
+    aug_rotation: 45
+    aug_flip: true
+    aug_occlusion: false
+    occlusion_prob: 0.5
+    occlusion_size: [25,25]
+    occlusion_nums: 3
+
+    # extra
+    mask_loss_weight: 0.5
+
+
+test:
+    batchsize: 16
+
+    bbox_score_threshold: 0.0
+    confidence_threshold: 0.2
+    oks_nms_threshold: 0.9
+
+    flip_test: true

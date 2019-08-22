@@ -41,6 +41,7 @@ python test.py \
 ```
 other testing optional commands
 ```
+--visualize // visualize the predicted heatmaps of model
 --param_flop
 ---margin 1.15  // [1.0,1.5] margin between bbox border and input size when testing 
 --flip_test   // horizontal flip test

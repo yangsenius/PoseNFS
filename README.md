@@ -1,6 +1,6 @@
 # Introduction to PNFS
 
-This is a framework named Pose Neural Fabrics Search (PNFS). We tightly integrate NAS with the task of human pose estimation. 
+This is the repository of `Pose Neural Fabrics Search (PNFS)`. We tightly integrate NAS with the task of human pose estimation. 
 More information see the paper [Pose Neural Fabrics Search]
 
 # Steps
@@ -47,9 +47,37 @@ other testing optional commands
 --use_dt   // use the detection results of COCO val set or test-dev set
 ```
 
-## Detailed Setting
+## Detailed Settings
 
 All detailed settings of the model is recorded in the [`configs/*.yaml`](configs/).
+
+#### Configuration for Fabric-Subnetwork
+
+A snippet of the hyperparameters of subnetworks from the `*.yaml`:
+```yaml
+subnetwork_config:
+
+  dataset_name: 'coco'
+  parts_num : 3
+  cell_config:
+  
+      vector_in_pixel : True
+      vector_dim: 8
+      convolution_mode: '2D'
+      
+      search_alpha: true
+      search_beta: true
+      operators: ["skip_connect", "Sep_Conv_3x3","Atr_Conv_3x3","max_pool_3x3"] # 
+
+      depth: 7
+      cut_layers_num: 4  # first several layers
+      size_types: [4,8,16,32] # scales is [1/4, 1/8, 1/16, 1/32]
+      hidden_states_num: 1
+      factor: 16
+      input_nodes_num: 1 # default
+```
+
+We think that more potential computing units can be defined as candidate operations.
 
 #### Body Parts Mode
 The body keypoints assignment for different parts is defined in [`src/network_factory/body_parts.py`](src/network_factory/body_parts.py)

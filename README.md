@@ -4,11 +4,11 @@ We integrate NAS with the task of human pose estimation. To make full use of the
 
 # Steps
 
-1. Create the `o` directory to reserve each experiment's output
+## Create the `o` directory to reserve each experiment's output
 ```
 mkdir o  
 ```
-2. Train the model
+## Train the model
 ```
 python train.py \
 --cfg configs/our3.yaml \
@@ -28,7 +28,7 @@ other training optional commands
 --debug // debug the input data and visualization
 --show_arch_value // print the parameters of architecture in the training process
 ```
-3. Test the model
+## Test the model
 ```
 python test.py --cfg configs/ours3.yaml --exp_name o/your_test_experiment_name --gpu 0,1 --test_model o/path_to_your_saved_model --flip_test 
 ```
@@ -40,7 +40,7 @@ other testing optional commands
 --use_dt // use the detection results of COCO val set or test-dev set
 ```
 
-4. Other settings of model.
+## Other settings of model.
 
 All detailed setting of the model is recored in the `configs/*.yaml`.
 
@@ -49,6 +49,8 @@ All detailed setting of the model is recored in the `configs/*.yaml`.
 About the `vector in pixel` method, we provide two convolutional mode `Conv2d` and `Conv3d` to implement the idea of how to construct the vector representation (`5D-Tensor`) of keypoint. We use the `Conv2d` mode (reshape `5D-Tensor` to `4D-Tensor`) to get the data in paper. The way of construting the vector represntation can be modified in more possible tricks，but the method of computing the 2-norm of each vector is determined.
 
 # Experiments
+
+coming soon.
 
 
 

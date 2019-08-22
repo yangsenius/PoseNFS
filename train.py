@@ -28,22 +28,25 @@ from tensorboardX import SummaryWriter
 
 
 def args():
+
     parser = argparse.ArgumentParser(description='Architecture Search')
+
     parser.add_argument('--cfg',            help='experiment configure file name',  required=True,   default='config.yaml', type=str)
     parser.add_argument('--exp_name',       help='experiment name',        default='NAS-0'     , type=str)
     parser.add_argument('--gpu',            help='gpu ids',                 default = '0,1',                      type =str)
     parser.add_argument('--load_ckpt',      help='reload the last save ckeckpoint in current directory', action='store_true', default=False)
     parser.add_argument('--debug',          help='save batch images ', action='store_true', default=False)
-    parser.add_argument('--num_workers',    help='workers number (debug=0) ', default = 4,                      type =int)
+    parser.add_argument('--num_workers',    help='workers number (debug=0) ', default = 8,                      type =int)
 
     parser.add_argument('--param_flop',     help=' ', action='store_true', default=False)
     parser.add_argument('--show_arch_value',help='show_arch_value ', action='store_true', default=False)
-    parser.add_argument('--search'    ,help = 'search method: None,random,sync,second_order_gradient,first_order_gradient',type=str)
+    parser.add_argument('--search'    ,     help = 'search method: None,random,sync,second_order_gradient,first_order_gradient',type=str)
+    parser.add_argument('--batchsize',      help='',   type =int)
 
-    parser.add_argument('--set_cell_config',help='save batch images ', action='store_true', default=False)
-    parser.add_argument('--cell_depth',     help='',                 default = 8,                      type = int)
-    parser.add_argument('--cell_hidden',    help='',                 default = 1,                      type =int)
-    parser.add_argument('--cell_factor',    help='',                 default = 8,                      type =int)
+    # parser.add_argument('--set_cell_config',help='save batch images ', action='store_true', default=False)
+    # parser.add_argument('--cell_depth',     help='',                 default = 8,                      type = int)
+    # parser.add_argument('--cell_hidden',    help='',                 default = 1,                      type =int)
+    # parser.add_argument('--cell_factor',    help='',                 default = 8,  )
 
     args = parser.parse_args()
     return args
@@ -86,7 +89,11 @@ def main():
     if arg.search:
         assert arg.search in ['None','sync','random','second_order_gradient','first_order_gradient']
         config.train.arch_search_strategy = arg.search
-        
+
+    if arg.batchsize:
+        logger.info("update batchsize to {}".format(arg.batchsize) )
+        config.train.batchsize = arg.batchsize
+
     config.num_workers = arg.num_workers
         
     print('GPU memory : \ntotal | used\n',os.popen(
@@ -96,6 +103,7 @@ def main():
     logger.info('------------------------------ configuration ---------------------------')
     logger.info('\n==> available {} GPUs , use numbers are {} device is {}\n'
                 .format(torch.cuda.device_count(),os.environ["CUDA_VISIBLE_DEVICES"],torch.cuda.current_device()))
+    # torch.cuda._initialized = True
     logger.info(pprint.pformat(config))
     logger.info('------------------------------- -------- ----------------------------')
 
@@ -119,6 +127,7 @@ def main():
     # graph = SummaryWriter(output_dir+'/log')
     # graph.add_graph(Arch, (dump_input, ))
 
+    
 
     if len(arg.gpu)>1:
         use_multi_gpu = True
@@ -192,7 +201,17 @@ def main():
     # graph.close()
 
 
+# Attributes of the wrapped module
 
+    # After wrapping a Module with DataParallel, the attributes of the module (e.g. custom methods) became inaccessible. 
+    # This is because DataParallel defines a few new members, and allowing other attributes might lead to clashes in their names. 
+    # For those who still want to access the attributes, a workaround is to use a subclass of DataParallel as below.
+    # https://pytorch.org/tutorials/beginner/former_torchies/parallelism_tutorial.html
+
+class MyDataParallel(torch.nn.DataParallel):
+
+    def __getattr__(self, name):
+        return getattr(self.module, name)
 
 
 

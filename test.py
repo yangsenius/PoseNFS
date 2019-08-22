@@ -164,20 +164,20 @@ def main():
         valid_dataloader = torch.utils.data.DataLoader(valid_dataset, batch_size = config.test.batchsize, shuffle = False , num_workers = 4 , pin_memory=True )
     
     if arg.debug:
-      for i in range(len(valid_dataset)):
-          #print(valid_dataset[i][1])
-          # choose an image_id
-          if valid_dataset[i][1]!=185250:
-              continue
-          print(valid_dataset[i][1])
-          sample = valid_dataset[i]
+        for i in range(len(valid_dataset)):
+            #print(valid_dataset[i][1])
+            # choose an image_id
+            if valid_dataset[i][1]!=185250:
+                continue
+            print(valid_dataset[i][1])
+            sample = valid_dataset[i]
 
-          img = sample[0].unsqueeze(0)
-          #samples = next(iter(valid_dataloader))
-          #img = samples[0]
-          output = Arch(img)
-          print(img.size(),output.size())
-          visualize_heatamp(img,output,'heatmaps')
+            img = sample[0].unsqueeze(0)
+            #samples = next(iter(valid_dataloader))
+            #img = samples[0]
+            output = Arch(img)
+            print(img.size(),output.size())
+            visualize_heatamp(img,output,'heatmaps')
 
     results = evaluate( Arch, valid_dataloader , config, output_dir)
     logger.info('map = {}'.format(results))

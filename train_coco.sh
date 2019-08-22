@@ -1,5 +1,5 @@
 python train.py \
---cfg exp_config/coco/sync/256x256/resnet.yaml \
+--cfg configs/ours3.yaml \
 --exp_name o/coco-ours-3/ \
 --gpu 0,1 \
 --param_flop \

@@ -1,6 +1,6 @@
 # Introduction to PNFS
 
-We tightly integrate NAS with the task of human pose estimation. 
+This is a framework named Pose Neural Fabrics Search (PNFS). We tightly integrate NAS with the task of human pose estimation. 
 We model body pose into multiple part representations, each of which is predicted by a cell-based neural fabric. 
 More information see the paper [Pose Neural Fabrics Search]
 

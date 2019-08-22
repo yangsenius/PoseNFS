@@ -103,7 +103,7 @@ class Meta_Arch(nn.Module):
                 l.append(eval('self.'+'cell_{}_{}'.format(i,j)))
                 cell_id += 1
 
-            self.cell_fabrics.append(l)　
+            self.cell_fabrics.append(l)
 
         ############
         self.Num = Num # N is a list store the number of cells in each layer j

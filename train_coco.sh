@@ -3,5 +3,5 @@ python train.py \
 --exp_name o/coco-ours-3/ \
 --gpu 0,1 \
 --param_flop \
---batchsize 60
+--batchsize 72
 --load_ckpt

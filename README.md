@@ -1,6 +1,8 @@
-# Pose-Neural-Fabric-Search
+# Introduction
 
-We integrate NAS with the task of human pose estimation. To make full use of the structure of human body and NAS' ability of learning structures of networks, we model body pose into multiple parts,each of which is predicted by a cell-based neural fabric.
+We tightly integrate NAS with the task of human pose estimation. 
+We model body pose into multiple part representations, each of which is predicted by a cell-based neural fabric. 
+More information see the paper [Pose Neural Fabrics Search]
 
 # Steps
 
@@ -22,22 +24,27 @@ sh train_coco.sh
 other training optional commands
 
 ```
---batchsize // change the default batchsize
---param_flop // report the parameters and FLOPs
---search search_method_name // options: ['None','random','sync','first_order_gradient','second_order_gradient']
---debug // debug the input data and visualization
---show_arch_value // print the parameters of architecture in the training process
+--batchsize 32  // change the default batchsize
+--param_flop   // report the parameters and FLOPs
+--search search_method_name   // options: ['None','random','sync','first_order_gradient','second_order_gradient']
+--debug   // debug the input data and visualization
+--show_arch_value   // print the parameters of architecture in the training process
 ```
 ## Test the model
 ```
-python test.py --cfg configs/ours3.yaml --exp_name o/your_test_experiment_name --gpu 0,1 --test_model o/path_to_your_saved_model --flip_test 
+python test.py \
+--cfg configs/ours3.yaml \
+--exp_name o/your_test_experiment_name \
+--gpu 0,1 \
+--test_model o/path_to_your_saved_model \
+--flip_test 
 ```
 other testing optional commands
 ```
 --param_flop
----margin 1.15 // margin between bbox border and input size [1.0,1.5]
---flip_test // horizontal flip test
---use_dt // use the detection results of COCO val set or test-dev set
+---margin 1.15  // [1.0,1.5] margin between bbox border and input size when testing 
+--flip_test   // horizontal flip test
+--use_dt   // use the detection results of COCO val set or test-dev set
 ```
 
 ## Other settings of model.

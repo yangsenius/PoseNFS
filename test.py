@@ -39,7 +39,7 @@ def args():
     
     parser.add_argument('--gpu',       help='gpu ids',  type=str  )
     parser.add_argument('--margin',       help='margin_to_border',  type=float ,default= 1.15 )
-    parser.add_argument('--debug',       help='visualize',  action='store_true' ,default= False )
+    parser.add_argument('--visualize',       help='visualize',  action='store_true' ,default= False )
 
     args = parser.parse_args()
     return args
@@ -163,7 +163,7 @@ def main():
         logger.info("\n >>> use groundtruth bbox ")
         valid_dataloader = torch.utils.data.DataLoader(valid_dataset, batch_size = config.test.batchsize, shuffle = False , num_workers = 4 , pin_memory=True )
     
-    if arg.debug:
+    if arg.visualize:
         for i in range(len(valid_dataset)):
             #print(valid_dataset[i][1])
             # choose an image_id

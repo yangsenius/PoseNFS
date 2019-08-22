@@ -16,10 +16,6 @@ python train.py \
 --exp_name o/your_train_experiment_name \
 --gpu 0,1 
 ```
-or
-```
-sh train_coco.sh
-```
 other training optional commands
 
 ```
@@ -53,7 +49,7 @@ All detailed settings of the model is recorded in the [`configs/*.yaml`](configs
 
 #### Configuration for Fabric-Subnetwork
 
-A snippet of the hyperparameters of subnetworks from the `*.yaml`:
+A snippet of the `*.yaml` for the hyperparameters of subnetworks :
 ```yaml
 subnetwork_config:
 

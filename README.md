@@ -41,7 +41,7 @@ python test.py \
 ```
 other testing optional commands
 ```
---visualize // visualize the predicted heatmaps of model
+--visualize   // visualize the predicted heatmaps of model
 --param_flop
 ---margin 1.15  // [1.0,1.5] margin between bbox border and input size when testing 
 --flip_test   // horizontal flip test
@@ -50,10 +50,10 @@ other testing optional commands
 
 ## Detailed Setting
 
-All detailed setting of the model is recored in the [`configs/*.yaml`](configs/).
+All detailed settings of the model is recorded in the [`configs/*.yaml`](configs/).
 
 #### Body Parts Mode
-The body keypoints assignment for different parts is defined in [src/network_factory/body_parts.py](src/network_factory/body_parts.py)
+The body keypoints assignment for different parts is defined in [`src/network_factory/body_parts.py`](src/network_factory/body_parts.py)
 The partion type of body parts can have more possibilities.
 
 #### Exploration

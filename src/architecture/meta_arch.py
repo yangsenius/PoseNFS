@@ -103,7 +103,7 @@ class Meta_Arch(nn.Module):
                 l.append(eval('self.'+'cell_{}_{}'.format(i,j)))
                 cell_id += 1
 
-            #　self.cell_fabrics.append(l)　　multi-gpu bugs
+            self.cell_fabrics.append(l)　
 
         ############
         self.Num = Num # N is a list store the number of cells in each layer j
@@ -147,10 +147,12 @@ class Meta_Arch(nn.Module):
         cell_id = 0
         for j in range(self.arch_depth):
 
-            layer = self.cell_fabrics[j]
+            # layer = self.cell_fabrics[j]
             OUTPUTS = []
 
-            for i, cell in enumerate( layer):
+            for i in range(self.Num[j]): # the number of cells in j-th layer of cell-fabric
+                
+                cell = eval('self.cell_{}_{}'.format(j,i))  # the j-th layer i-th scale of cell-fabric
 
                 if j==0: # for first layer all input come from x
                     output = cell(x, x, x , x,self.alphas, self.betas[cell_id]) # cancel prev_prev!!

@@ -80,19 +80,20 @@ def train(epoch, train_queue, arch_queue ,model,search_arch,criterion,optimizer,
             logger.info('epoch: {}   \titers:[{}|{}]   \tloss:{:.6f}({:.5f})  \tfeed-speed:{:.2f} samples/s' #  \tembedloss:{:.8f}'
                         .format(epoch,iters,len(train_queue),loss.val, loss.avg ,len(x)/time))#,embedding_loss))
 
-        if iters % 1000 == 0 and args.show_arch_value:
+        if iters % 1000 == 0 and args.show_arch_value and hasattr(model,"groups"):
             model.groups[0]._show_alpha()
             model.groups[1]._show_alpha()
             model.groups[2]._show_alpha()
 
     if args.show_arch_value or epoch % 10==0: # alpha and beta will be constant when nas is `none`
         logger.info("=========>current architecture's values before evaluate")
-        if hasattr(model.backbone,"alphas"):
-            model.backbone._show_alpha(original_value=True)
-            model.backbone._show_beta(original_value=True)
-        for g in model.groups:
-            g._show_alpha(original_value=False)
-            g._show_beta(original_value=False)
+        if hasattr(model,"backbone"):
+            if hasattr(model.backbone,"alphas"):
+                model.backbone._show_alpha(original_value=True)
+                model.backbone._show_beta(original_value=True)
+            for g in model.groups:
+                g._show_alpha(original_value=False)
+                g._show_beta(original_value=False)
         # #model.groups[0]._show_alpha(original_value=True)
         # model.groups[1]._show_alpha()
         # model.groups[1]._show_beta()

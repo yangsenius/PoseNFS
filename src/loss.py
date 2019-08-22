@@ -1,5 +1,5 @@
-# Copyright (c) SEU - PatternRec
-# Licensed under the MIT License.
+# -*- coding: UTF-8 -*-
+#!/usr/bin/python
 # Written by Sen Yang (yangsenius@seu.edu.cn)
 
 import torch

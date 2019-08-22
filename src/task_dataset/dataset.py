@@ -1,5 +1,5 @@
-# Copyright (c) SEU - PatternRec
-# Licensed under the MIT License.
+# -*- coding: UTF-8 -*-
+#!/usr/bin/python
 # Written by Sen Yang (yangsenius@seu.edu.cn)
 
 import torch
@@ -118,18 +118,7 @@ class dataset_(Dataset):
             self.kpts_weight = np.array([ 1., 1., 1., 1., 1., 1., 1., 
                                         1., 1., 1., 1., 1., 1., 1., 1., 1.],dtype=np.float32  )
             self.images_root = images_dir
-
-            if "trainval" in config.train and mode =='train':
-                
-                if config.train.trainval:
-                    self.annotations = json.load(open(os.path.join(annotions_path,'trainval.json')))
-                    logger.info("train dataset is train+val dataset")
-                
-                else:
-                    self.annotations = json.load(open(os.path.join(annotions_path,'{}.json'.format(mode)),'r'))
-
-            else:
-                self.annotations = json.load(open(os.path.join(annotions_path,'{}.json'.format(mode)),'r'))
+            self.annotations = json.load(open(os.path.join(annotions_path,'{}.json'.format(mode)),'r'))
             return self.mpii_get_db(mode)
 
 
@@ -410,7 +399,6 @@ class dataset_(Dataset):
         if self.mode == 'val' or self.mode =='dt':
             info['prior_mask'] = mask
             #info['area'] = area
-            #print(input_data.shape)
             return input_data , image_id  , score, np.linalg.inv(affine_matrix), np.array(bbox), info 
 
 

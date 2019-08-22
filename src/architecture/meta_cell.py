@@ -5,6 +5,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 from architecture.operators import OPS , Connections , ReLUConvBN
 
+# Note that !
+# In paper, we don't take the previous previous cell's output to the current cell
+# Therefore, we set `prev_prev_skip = False`
 prev_prev_skip = False
 
 

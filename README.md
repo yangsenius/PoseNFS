@@ -49,7 +49,7 @@ other testing optional commands
 
 ## Detailed Setting
 
-All detailed setting of the model is recored in the `configs/*.yaml`.
+All detailed setting of the model is recored in the [`configs/*.yaml`](configs/).
 
 #### Body Parts Mode
 The body keypoints assignment for different parts is defined in [src/network_factory/body_parts.py](src/network_factory/body_parts.py)

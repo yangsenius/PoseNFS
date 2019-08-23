@@ -43,6 +43,7 @@ def args():
     parser.add_argument('--show_arch_value',help='show_arch_value ', action='store_true', default=False)
     parser.add_argument('--search'    ,     help = 'search method: None,random,sync,second_order_gradient,first_order_gradient',type=str)
     parser.add_argument('--batchsize',      help='',   type =int)
+    parser.add_argument('--visualize',     help=' ', action='store_true', default=False)
 
     # parser.add_argument('--set_cell_config',help='save batch images ', action='store_true', default=False)
     # parser.add_argument('--cell_depth',     help='',                 default = 8,                      type = int)

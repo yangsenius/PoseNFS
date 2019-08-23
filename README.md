@@ -15,7 +15,7 @@ python train.py \
 --exp_name o/your_train_experiment_name \
 --gpu 0,1 
 ```
-other training optional commands
+other optional commands for training
 
 ```
 --batchsize 32  // change the default batchsize
@@ -34,7 +34,7 @@ python test.py \
 --test_model o/path_to_your_saved_model \
 --flip_test 
 ```
-other testing optional commands
+other optional commands for testing
 ```
 --visualize   // visualize the predicted heatmaps
 --param_flop

@@ -73,7 +73,7 @@ subnetwork_config:
       input_nodes_num: 1 # default
 ```
 
-We think that more potential computing units can be defined as candidate operations.
+More potential computing units can be defined as candidate operations.
 
 #### Body Parts Mode
 The body keypoints assignment for different parts is defined in [`src/network_factory/body_parts.py`](src/network_factory/body_parts.py)

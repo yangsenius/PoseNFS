@@ -1,7 +1,6 @@
 # Introduction to PNFS
 
-This is the repository of `Pose Neural Fabrics Search (PNFS)`. We tightly integrate NAS with the task of human pose estimation. 
-More information see the paper [Pose Neural Fabrics Search]
+This is the repository of `Pose Neural Fabrics Search (PNFS)` framework.  More information see the paper [Pose Neural Fabrics Search].
 
 # Steps
 

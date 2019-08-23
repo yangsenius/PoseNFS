@@ -22,7 +22,8 @@ other training optional commands
 --batchsize 32  // change the default batchsize
 --param_flop   // report the parameters and FLOPs
 --search search_method_name   // options: ['None','random','sync','first_order_gradient','second_order_gradient']
---debug   // debug the input data and visualization
+--debug   // output the augmented input data for check
+--visualize // visualize the predicted heatmaps for an image with the training process (per 5 epcohes)
 --show_arch_value   // print the parameters of architecture in the training process
 ```
 ## Test the model
@@ -36,7 +37,7 @@ python test.py \
 ```
 other testing optional commands
 ```
---visualize   // visualize the predicted heatmaps of model
+--visualize   // visualize the predicted heatmaps
 --param_flop
 ---margin 1.15  // [1.0,1.5] margin between bbox border and input size when testing 
 --flip_test   // horizontal flip test

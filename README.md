@@ -74,7 +74,7 @@ subnetwork_config:
       input_nodes_num: 1 # default
 ```
 
-More potential computing units can be defined as candidate operations.
+More potential cutomized computing units can be defined as candidate operations in [`src/architecture/operators.py`](src/architecture/operators.py).
 
 #### Body Parts Mode
 The body keypoints assignment for different parts is defined in [`src/network_factory/body_parts.py`](src/network_factory/body_parts.py)
@@ -82,7 +82,7 @@ The partion type of body parts can have more possibilities.
 
 #### Exploration
 
-About the `vector in pixel` method, we provide two convolutional mode `Conv2d` and `Conv3d` to implement the idea of how to construct the vector representation (`5D-Tensor`) of keypoint in [`src/network_factory/subnetwork.py`](src/network_factory/subnetwork.py). We use the `Conv2d` mode (reshape `5D-Tensor` to `4D-Tensor`) to get the data in paper. The way of construting the vector represntation can be modified in more possible tricks，but the method of computing the 2-norm of each vector is determined.
+About the `vector in pixel` method, we provide two convolutional mode `Conv2d` and `Conv3d` to implement the idea of how to construct the vector representation (`5D-Tensor`) of keypoint in [`src/network_factory/subnetwork.py`](src/network_factory/subnetwork.py). We use the `Conv2d` mode (reshape `5D-Tensor` to `4D-Tensor`) to get the data in paper. We indicate that the way of construting the vector represntation can be further explored in other fashions as long as the norm of the vector is under supervision.
 
 # Experiments
 

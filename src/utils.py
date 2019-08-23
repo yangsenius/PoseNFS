@@ -55,7 +55,7 @@ def load_ckpt(model , optimizer, scheduler, output_dir, logger):
 
 import matplotlib.pyplot as plt
 
-def visualize_heatamp(input,output,file_name):
+def visualize_heatamp(input,output,file_name,show_img=False):
 
     std=torch.tensor([0.229, 0.224, 0.225]).unsqueeze(-1).unsqueeze(-1)
     mean=torch.tensor([0.485, 0.456, 0.406]).unsqueeze(-1).unsqueeze(-1)
@@ -90,8 +90,11 @@ def visualize_heatamp(input,output,file_name):
             plt.imshow(output[num,:,:,i], cmap= 'jet' ,interpolation='lanczos') # jet seismic
             plt.colorbar()
             plt.title(keypoint_name[i])
-    plt.show()
-    plt.savefig("debug_detection_heatmap_{}.png".format(file_name))
+    os.mkdir("visualization")
+    plt.savefig("visualization/debug_detection_heatmap_{}.png".format(file_name))
+    if show_img:
+        plt.show()
+    
 
 
 def save_batch_image_with_joints(batch_image, batch_joints, batch_joints_vis,

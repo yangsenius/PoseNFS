@@ -21,7 +21,8 @@ from src.utils import   save_batch_image_with_joints,\
                     save_scripts_in_exp_dir,\
                     AverageMeter, \
                     load_ckpt,\
-                    filter_arch_parameters
+                    filter_arch_parameters, \
+                    visualize_heatamp
 
 
 from tensorboardX import SummaryWriter
@@ -191,12 +192,31 @@ def main():
         logger.info('==>time:({})--training...... current learning rate is {:.7f}'.format(datetime.datetime.now(),lr))
 
         train(epoch, train_queue, arch_queue ,Arch ,Search,criterion, optimizer,lr ,search_strategy ,output_dir,logger,config, arg,)
+        
         eval_results = evaluate( Arch, valid_queue , config, output_dir)
         if use_multi_gpu :
             best = save_model(epoch, best, eval_results, Arch.module, optimizer, scheduler, output_dir, logger)
         else:
 
             best = save_model(epoch, best, eval_results, Arch, optimizer, scheduler, output_dir, logger)
+        
+        ## visualize_heatamp 
+        if arg.visualize and epoch % 5 ==0:
+            for i in range(len(valid_queue.dataset)):
+                
+                
+                if valid_queue.dataset[i][1]!=185250: # choose an image_id
+                    continue
+                print(valid_queue.dataset[i][1])
+                sample = valid_queue.dataset[i]
+
+                img = sample[0].unsqueeze(0)
+                #samples = next(iter(valid_dataloader))
+                #img = samples[0]
+                output = Arch(img)
+                print(img.size(),output.size())
+                visualize_heatamp(img,output,'heatmaps',show_img=False)
+                break
 
     # graph.close()
 

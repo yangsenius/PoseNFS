@@ -114,7 +114,7 @@ def main():
         Arch.load_state_dict(torch.load(os.path.join(output_dir,'best_ckpt.tar')))
     else:
         logger.info('\n===>no ckpt is found, use the initial model ...')
-        raise ValueError
+        #raise ValueError
 
 
     #logger.info(Arch.backbone.alphas)
@@ -165,9 +165,9 @@ def main():
     
     if arg.visualize:
         for i in range(len(valid_dataset)):
-            #print(valid_dataset[i][1])
-            # choose an image_id
-            if valid_dataset[i][1]!=185250:
+            
+            
+            if valid_dataset[i][1]!=185250: # choose an image_id
                 continue
             print(valid_dataset[i][1])
             sample = valid_dataset[i]
@@ -177,7 +177,8 @@ def main():
             #img = samples[0]
             output = Arch(img)
             print(img.size(),output.size())
-            visualize_heatamp(img,output,'heatmaps')
+            visualize_heatamp(img,output,'heatmaps',show_img=True)
+            break
 
     results = evaluate( Arch, valid_dataloader , config, output_dir)
     logger.info('map = {}'.format(results))

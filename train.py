@@ -1,4 +1,5 @@
 import torch
+
 import os
 import numpy as np
 import pprint
@@ -45,10 +46,10 @@ def args():
     parser.add_argument('--batchsize',      help='',   type =int)
     parser.add_argument('--visualize',     help=' ', action='store_true', default=False)
 
-    # parser.add_argument('--set_cell_config',help='save batch images ', action='store_true', default=False)
-    # parser.add_argument('--cell_depth',     help='',                 default = 8,                      type = int)
-    # parser.add_argument('--cell_hidden',    help='',                 default = 1,                      type =int)
-    # parser.add_argument('--cell_factor',    help='',                 default = 8,  )
+    parser.add_argument("--local_rank", type=int,default=0)
+    parser.add_argument('--distributed', help="single node multi-gpus. \
+                        see more in https://pytorch.org/tutorials/intermediate/ddp_tutorial.html",
+                        action='store_true' ,default= False)
 
     args = parser.parse_args()
     return args
@@ -134,7 +135,13 @@ def main():
     if len(arg.gpu)>1:
         use_multi_gpu = True
         
-        Arch = torch.nn.DataParallel(Arch).cuda()
+        if arg.distributed:
+        #Arch = torch.nn.DataParallel(Arch).cuda()
+        #torch.cuda.set_device(arg.local_rank)
+            torch.distributed.init_process_group(backend="nccl",init_method='env://')
+            Arch = torch.nn.parallel.DistributedDataParallel(Arch,device_ids=[arg.local_rank])
+        else:
+            Arch = torch.nn.DataParallel(Arch).cuda()
     else:
         use_multi_gpu = False
         Arch = Arch.cuda()
@@ -178,6 +185,7 @@ def main():
 
     # best_result
     best = 0
+    
     logger.info("\n=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+= training +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+==")
     begin, end = config.train.epoch_begin, config.train.epoch_end
 
@@ -221,18 +229,6 @@ def main():
 
     # graph.close()
 
-
-# Attributes of the wrapped module
-
-    # After wrapping a Module with DataParallel, the attributes of the module (e.g. custom methods) became inaccessible. 
-    # This is because DataParallel defines a few new members, and allowing other attributes might lead to clashes in their names. 
-    # For those who still want to access the attributes, a workaround is to use a subclass of DataParallel as below.
-    # https://pytorch.org/tutorials/beginner/former_torchies/parallelism_tutorial.html
-
-class MyDataParallel(torch.nn.DataParallel):
-
-    def __getattr__(self, name):
-        return getattr(self.module, name)
 
 
 

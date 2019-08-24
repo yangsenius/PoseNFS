@@ -165,19 +165,19 @@ def main():
     
     if arg.visualize:
         for i in range(len(valid_dataset)):
+            imageid = 185250
             
-            
-            if valid_dataset[i][1]!=185250: # choose an image_id
+            if valid_dataset[i][1]!=imageid: # choose an image_id
                 continue
             print(valid_dataset[i][1])
             sample = valid_dataset[i]
-
+            logger.info("visualize the predicted heatmap of image id {} ".format(imageid))
             img = sample[0].unsqueeze(0)
             #samples = next(iter(valid_dataloader))
             #img = samples[0]
             output = Arch(img)
             print(img.size(),output.size())
-            visualize_heatamp(img,output,'heatmaps',show_img=True)
+            visualize_heatamp(img,output,'heatmaps',show_img=False)
             break
 
     results = evaluate( Arch, valid_dataloader , config, output_dir)

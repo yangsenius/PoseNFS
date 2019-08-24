@@ -90,8 +90,10 @@ def visualize_heatamp(input,output,file_name,show_img=False):
             plt.imshow(output[num,:,:,i], cmap= 'jet' ,interpolation='lanczos') # jet seismic
             plt.colorbar()
             plt.title(keypoint_name[i])
+            
     os.mkdir("visualization")
     plt.savefig("visualization/debug_detection_heatmap_{}.png".format(file_name))
+    print("output visualization result in visualization/debug_detection_heatmap_{}.png".format(file_name))
     if show_img:
         plt.show()
     

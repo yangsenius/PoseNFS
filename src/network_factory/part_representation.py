@@ -88,8 +88,10 @@ class Body_Part_Representation(nn.Module):
     def forward(self,x):
 
         
-        output = torch.zeros(x.size(0),self.out_dim, x.size(2)//4, x.size(3)//4).to(x.device)
-       
+        all_part_outputs = torch.zeros(
+            size=(len(self.parts),x.size(0),self.out_dim, x.size(2)//4, x.size(3)//4)
+            ).to(x.device)
+
         shared_feature = self.backbone(x)
 
         for id,part_name in enumerate(self.parts):
@@ -99,10 +101,14 @@ class Body_Part_Representation(nn.Module):
                 
             else:
                 f = shared_feature
-  
 
-            output[:,self.parts[part_name],:,:] += eval('self.'+'{}'.format(part_name))(f)
             
+            all_part_outputs[id,:,self.parts[part_name],:,:] = eval('self.'+'{}'.format(part_name))(f)
+        
+        # sum some part represenatations 
+        # for some keypoints sharing between parts, their prediction are summed (or averaged)
+        output = torch.sum(all_part_outputs,dim=0)
+
         return output
 
     def new(self):

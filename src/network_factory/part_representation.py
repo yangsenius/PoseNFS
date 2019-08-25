@@ -102,7 +102,6 @@ class Body_Part_Representation(nn.Module):
             else:
                 f = shared_feature
 
-            
             all_part_outputs[id,:,self.parts[part_name],:,:] = eval('self.'+'{}'.format(part_name))(f)
         
         # sum some part represenatations 

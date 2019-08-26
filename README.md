@@ -2,8 +2,6 @@
 
 This is the repository of [`Pose Neural Fabrics Search (PNFS)`](https://senyang-ml.github.io/research/2019-pose_neural_fabrics_search.pdf) paper. 
 
-Recently, Neural Architecture Search (NAS) technologies have successfully discovered well-performing and efﬁcient neural architectures for the tasks such as image classiﬁcation and semantic segmentation. However, current works decouple NAS from the speciﬁc task and then focus only on searching for an architecture to replace human-designed network in a popular framework. Can NAS bring more beneﬁts to a speciﬁc task? To explore this question, we propose a framework named Pose Neural Fabrics Search (PNFS) to tightly integrate NAS with the task of human pose estimation. To construct the neural architecture search space, we specially parameterize cellbased neural fabric to learn micro as well as macro neural architecture through gradient descent. To make full use of the explicit structural knowledge of human body and NAS’s ability of learning structures of networks, the global pose constraint relationships are modeled into multiple part representations, each of which is predicted by a personalized neural fabric. In the part representation, we view human skeleton keypoints as entitie at image locations by representing them as vectors, expecting it to capture keypoint’s feature in the vector space. The experiments on MPII and MS-COCO datasets demonstrate that PNFS can achieve comparable performance to state-of-the-art methods, with fewer model parameters and lower computational complexity.
-
 # Steps
 
 ## Create the `o` directory to reserve each experiment's output

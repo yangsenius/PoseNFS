@@ -87,14 +87,3 @@ About the `vector in pixel` method, we provide two convolutional mode `Conv2d` a
 We indicate that the way of construting the vector represntation can be further explored in other fashions as long as the norm of the vector is under supervision.
 The partion type of body parts can have more possibilities. The configurations of subnetworks for different parts can also be different
 More potential cutomized computing units can be defined as candidate operations in [`src/architecture/operators.py`](src/architecture/operators.py).
-
-
-
-# Experiments Results
-
-Coming soon.
-
-
-
-
- 

@@ -2,6 +2,15 @@
 
 This is the repository of [`Pose Neural Fabrics Search (PNFS)`](https://senyang-ml.github.io/research/2019-pose_neural_fabrics_search.pdf) paper. 
 
+# Dependencies
+```
+pytorch (version >=1.0.0)
+pycocotools
+easydict
+skimage
+```
+About the data preparation instruction of `MPII` and `COCO` dataset, please see this repository [https://github.com/microsoft/human-pose-estimation.pytorch](https://github.com/microsoft/human-pose-estimation.pytorch).
+
 # Steps
 
 ## Create the `o` directory to reserve each experiment's output

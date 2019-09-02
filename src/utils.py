@@ -50,6 +50,7 @@ def load_ckpt(model , optimizer, scheduler, output_dir, logger):
     else:
         logger.info("no ckeckpoint find in {}, training from epoch 0".format(ckpt_path))
         begin = 0
+        best = 0
 
     return begin,best
 
@@ -90,7 +91,7 @@ def visualize_heatamp(input,output,file_name,show_img=False):
             plt.imshow(output[num,:,:,i], cmap= 'jet' ,interpolation='lanczos') # jet seismic
             plt.colorbar()
             plt.title(keypoint_name[i])
-            
+
     os.mkdir("visualization")
     plt.savefig("visualization/debug_detection_heatmap_{}.png".format(file_name))
     print("output visualization result in visualization/debug_detection_heatmap_{}.png".format(file_name))
@@ -296,53 +297,15 @@ def get_model_summary(model, *input_tensors, item_length=26, verbose=False):
     return details
 
 
-    # class visualization_heatmaps(object):
 
+# # Attributes of the wrapped module
 
-    # def __init__(self,model,img):
+#     # After wrapping a Module with DataParallel, the attributes of the module (e.g. custom methods) became inaccessible. 
+#     # This is because DataParallel defines a few new members, and allowing other attributes might lead to clashes in their names. 
+#     # For those who still want to access the attributes, a workaround is to use a subclass of DataParallel as below.
+#     # https://pytorch.org/tutorials/beginner/former_torchies/parallelism_tutorial.html
 
-    #     """
-    #     Arg:    model - nn.Module
-    #             img - (3,H,W) torch.tensor.float32
-    #     """
+# class MyDataParallel(torch.nn.DataParallel):
 
-    #     self.model = model.cuda()
-    #     self.img = img.unsqueeze(0).cuda()
-    #     self.inv_transform_std=torch.tensor([0.229, 0.224, 0.225]).unsqueeze(-1).unsqueeze(-1)
-    #     self.inv_transform_mean=torch.tensor([0.485, 0.456, 0.406]).unsqueeze(-1).unsqueeze(-1)
-
-    # def output(self,):
-
-    #     return self.model(self.img)  #[1,k,H/4,W/4]
-    
-    # def vi(self):
-        
-    #     heatmaps = self.output()
-    #     heatmaps = heatmaps.squeeze().cpu().numpy() #[k,H/4,W/4]
-
-    #     img = self.img.cpu() * self.inv_transform_std + self.inv_transform_mean
-    #     img = img.permute(1,2,0).numpy()
-
-
-    #     fig=plt.figure(figsize=(16,8),constrained_layout=False)
-    #     fig.subplots_adjust(top=0.93,bottom=0.075,left=0.0,right=0.985,hspace=0.485,wspace=0.0) #(left=0.03, right=0.97, hspace=0.3, wspace=0.05)
-        
-    #     fig_lines = 3
-    #     fig_rows = 6
-
-    #     fig.add_subplot( fig_lines, fig_rows , 1)
-        
-    #     plt.imshow(img,cmap='gray')   
-
-    #     plt.title('image')
-        
-    #     keypoint_channels = len(heatmaps)
-    
-    #     #############   show heatmaps   ############
-    #     for i in range(keypoint_channels):
-    #         fig.add_subplot( fig_lines, fig_rows , i+2,)
-    #         plt.imshow(heatmaps[i,:,:], cmap= 'seismic' ,interpolation='lanczos')#,vmin=0,vmax=1) # coolwarm seismic magma viridis tab20b  interpolation=' lanczos'
-    #         plt.colorbar()
-
-    #     plt.show() 
-          
+#     def __getattr__(self, name):
+#         return getattr(self.module, name)

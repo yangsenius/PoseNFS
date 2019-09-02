@@ -1,7 +1,7 @@
 import torch
 import torchvision
 from task_dataset.dataset import dataset_
-
+from torch.utils.data import DistributedSampler
 import logging
 logger = logging.getLogger(__name__)
 
@@ -12,7 +12,7 @@ data_normalize = torchvision.transforms.Compose([
                                         std=[0.229, 0.224, 0.225])])
 
     
-def Dataloaders(search_strategy,config):
+def Dataloaders(search_strategy,config,arg):
 
     train_dataset = dataset_( config, config.images_root_dir,
                                 config.annotation_root_dir,
@@ -29,13 +29,13 @@ def Dataloaders(search_strategy,config):
 
 
     if search_strategy in ['None','sync','random'] :
-        train_queue, arch_queue, valid_queue = normal_dataloader(train_dataset,valid_dataset,config)
+        return normal_dataloader(train_dataset,valid_dataset,config,arg)
     else:
-        train_queue,arch_queue,valid_queue = split_for_nas(train_dataset,valid_dataset,config,
-                                                    split_for_train = config.train.split_for_train,
-                                                    split_for_valid = config.train.split_for_archvalid)
+        return split_for_nas(train_dataset,valid_dataset,config,
+                            split_for_train = config.train.split_for_train,
+                            split_for_valid = config.train.split_for_archvalid)
         
-    return train_queue,arch_queue,valid_queue
+    #return train_queue,arch_queue,valid_queue
     
         
 
@@ -88,15 +88,37 @@ def split_for_nas(train_dataset,valid_dataset,config,split_for_train=2,split_for
     return train_queue, arch_queue , valid_queue  
 
 
-def normal_dataloader(train_dataset,valid_dataset,config):
+def normal_dataloader(train_dataset,valid_dataset,config,arg):
     
     num_workers = config.num_workers
     pin_memory = True
     logger.info("\n num_workers of dataloader is {}".format(num_workers))
+
+
+    if arg.distributed:
+        train_dist_sampler =  DistributedSampler(train_dataset)
+        #valid_sampler_dist =  DistributedSampler(valid_dataset)
+        
+    else:
+        train_dist_sampler = None
+
     train_queue = torch.utils.data.DataLoader(train_dataset, 
-                batch_size = config.train.batchsize, num_workers = num_workers ,   pin_memory=pin_memory , shuffle = True)
+                    batch_size = config.train.batchsize, 
+                    num_workers = num_workers ,   
+                    pin_memory=pin_memory , 
+                    shuffle = (train_dist_sampler is None), 
+                    sampler= train_dist_sampler
+                    )
 
     valid_queue = torch.utils.data.DataLoader(valid_dataset, 
-                batch_size = config.train.batchsize, num_workers = num_workers ,   pin_memory=pin_memory , shuffle = False)
+                    batch_size = config.train.batchsize, 
+                    num_workers = num_workers ,   
+                    pin_memory=pin_memory , 
+                    shuffle = False, )
 
-    return train_queue ,None, valid_queue
+    
+
+    if arg.distributed:
+        return train_queue ,None, valid_queue ,train_dist_sampler
+    else:
+        return train_queue ,None, valid_queue

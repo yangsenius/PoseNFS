@@ -125,9 +125,9 @@ class Sub_Arch(Meta_Arch):
 
                 #prev_prev = prev_prev_layer[i] if i<Num[j-2] else prev_paral
                 #prev_prev = torch.zeros_like(prev_prev) # cancel prev_prev!!
-                
-                output = cell(prev_paral, prev_above, prev_below , prev_prev,
-                                self.alphas, self.betas[cell_id])
+                with torch.autograd.set_detect_anomaly(True):
+                    output = cell(prev_paral, prev_above, prev_below , prev_prev,
+                                    self.alphas, self.betas[cell_id])
                 cell_id += 1
                 
                 OUTPUTS.append(output)

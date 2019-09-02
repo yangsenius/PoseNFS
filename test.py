@@ -40,7 +40,8 @@ def args():
     parser.add_argument('--gpu',       help='gpu ids',  type=str  )
     parser.add_argument('--margin',       help='margin_to_border',  type=float ,default= 1.15 )
     parser.add_argument('--visualize',       help='visualize',  action='store_true' ,default= False )
-
+    parser.add_argument('--dataset', help='run test.py on which dataset. options: test or val', default='val')
+    
     args = parser.parse_args()
     return args
 
@@ -85,7 +86,7 @@ def main():
     
     criterion = MSELoss()
 
-    Arch = bulid_up_network(config,criterion)
+    Arch = bulid_up_network(config, criterion)
 
     if arg.param_flop:
         Arch._print_info()
@@ -142,6 +143,7 @@ def main():
     
     #test_img(valid_dataset,output_dir)
 
+    
     valid_dt_dataset =dataset_(config,config.images_root_dir,
                             config.person_detection_results_path,
                             mode='dt',

@@ -28,6 +28,12 @@ from src.utils import   save_batch_image_with_joints,\
 
 from tensorboardX import SummaryWriter
 
+import torch.distributed
+import torch.nn.parallel
+import torch.multiprocessing as mp
+import torch.utils.data
+import torch.utils.data.distributed
+from torch.utils.data.distributed import DistributedSampler
 
 def args():
 
@@ -49,34 +55,50 @@ def args():
     parser.add_argument('--distributed', help="single node multi-gpus. \
                         see more in https://pytorch.org/tutorials/intermediate/ddp_tutorial.html",
                         action='store_true' ,default= False)
+                        
+    parser.add_argument('--local_rank', default=0, type=int,
+                         help='node rank for distributed training')
+    # parser.add_argument('--world-size', default=-1, type=int,
+    #                 help='number of nodes for distributed training')
+    # arser.add_argument('--rank', default=-1, type=int,
+    #                     help='node rank for distributed training')
+    # parser.add_argument('--dist-url', default='tcp://127.0.0.1:FREEPORT', type=str,
+    #                     help='url used to set up distributed training')
 
     args = parser.parse_args()
     return args
 
-def logging_set(output_dir):
-
-    logging.basicConfig(filename = os.path.join(output_dir,'train_{}.log'.format(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))),
+def logging_set(output_dir,local_rank=None):
+    if local_rank is not None:
+        logging.basicConfig(filename = os.path.join(output_dir,'train_{}.log'.format(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))),
+                    format = '[{}]%(message)s'.format(local_rank))
+    else:
+        logging.basicConfig(filename = os.path.join(output_dir,'train_{}.log'.format(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))),
                     format = '%(message)s')
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
+    
     console = logging.StreamHandler()
-    logging.getLogger('').addHandler(console)
+    logging.getLogger().addHandler(console)
     return logger
     
 def main():
 
     arg = args()
-
+    
     if not os.path.exists(arg.exp_name):
         os.makedirs(arg.exp_name)
 
     assert arg.exp_name.split('/')[0]=='o',"'o' is the directory of experiment, --exp_name o/..."
     output_dir = arg.exp_name
+
     
-    save_scripts_in_exp_dir(output_dir)
+    if arg.local_rank ==0:
+        save_scripts_in_exp_dir(output_dir)
 
-    logger = logging_set(output_dir)
-
+    
+    logger = logging_set(output_dir,arg.local_rank)
+    logger.info(arg)
     logger.info('\n================ experient name:[{}] ===================\n'.format(arg.exp_name))
     os.environ["CUDA_VISIBLE_DEVICES"] = arg.gpu
 
@@ -84,7 +106,6 @@ def main():
     torch.backends.cudnn.benchmark = True
     np.random.seed(0)
     torch.manual_seed(0)
-
 
     config = edict( yaml.load( open(arg.cfg,'r')))
 
@@ -109,6 +130,7 @@ def main():
     logger.info(pprint.pformat(config))
     logger.info('------------------------------- -------- ----------------------------')
 
+    best = 0
 
     criterion = MSELoss()
 
@@ -125,25 +147,43 @@ def main():
     if arg.param_flop:
         Arch._print_info()
 
-    # dump_input = torch.rand((1,3,128,128))
-    # graph = SummaryWriter(output_dir+'/log')
-    # graph.add_graph(Arch, (dump_input, ))
+    
 
     if len(arg.gpu)>1:
         use_multi_gpu = True
-        Arch = torch.nn.DataParallel(Arch).cuda()
+        
+        if arg.distributed:
+            torch.distributed.init_process_group(backend="nccl")
+            #torch.distributed.init_process_group(backend="nccl",init_method='env://')
+            local_rank = torch.distributed.get_rank()
+            torch.cuda.set_device(local_rank)
+            device = torch.device("cuda", local_rank)
+            Arch.to(device)
+
+            Arch = torch.nn.parallel.DistributedDataParallel(Arch,
+                                                    device_ids=[local_rank],
+                                                    output_device=local_rank,
+                                                    find_unused_parameters=True)
+            logger.info("local rank = {}".format(local_rank))
+        else:
+            Arch = torch.nn.DataParallel(Arch).cuda()
     else:
         use_multi_gpu = False
         Arch = Arch.cuda()
-
     
     Search = Search_Arch(Arch.module, config) if use_multi_gpu else Search_Arch(Arch, config)# Arch.module for nn.DataParallel
 
     search_strategy = config.train.arch_search_strategy
 
-    train_queue, arch_queue, valid_queue = Dataloaders(search_strategy,config,arg)
+    if not arg.distributed:
+        train_queue, arch_queue, valid_queue = Dataloaders(search_strategy,config,arg)
+    else:
+        train_queue, \
+        arch_queue, \
+        valid_queue, \
+        train_sampler_dist, = Dataloaders(search_strategy,config,arg)
     #Note: if the search strategy is `None` or `SYNC`, the arch_queue is None!
-
+        
     logger.info("\nNeural Architecture Search strategy is {}".format(search_strategy))
     assert search_strategy in ['first_order_gradient','random','None','second_order_gradient','sync']
 
@@ -167,7 +207,7 @@ def main():
                                                         eta_min = config.train.w_lr_cosine_end)
 
     # best_result
-    best = 0
+    
     
     logger.info("\n=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+= training +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+==")
     begin, end = config.train.epoch_begin, config.train.epoch_end
@@ -179,39 +219,28 @@ def main():
             begin ,best = load_ckpt(Arch,optimizer, scheduler, output_dir, logger)
 
     for epoch in range(begin, end):
-        
+       
         lr = scheduler.get_lr()[0]
         logger.info('==>time:({})--training...... current learning rate is {:.7f}'.format(datetime.datetime.now(),lr))
 
+        if arg.distributed:
+            train_sampler_dist.set_epoch(epoch)
+            #valid_sampler_dist.set_epoch(epoch)
+        
         train(epoch, train_queue, arch_queue ,Arch ,Search,criterion, optimizer,lr ,search_strategy ,output_dir,logger,config, arg,)
         scheduler.step()
 
-        eval_results = evaluate( Arch, valid_queue , config, output_dir)
-        if use_multi_gpu :
-            best = save_model(epoch, best, eval_results, Arch.module, optimizer, scheduler, output_dir, logger)
-        else:
+        if not arg.distributed or (arg.distributed and arg.local_rank==0):
 
-            best = save_model(epoch, best, eval_results, Arch, optimizer, scheduler, output_dir, logger)
-        
-        ## visualize_heatamp 
-        if arg.visualize and epoch % 5 ==0:
-            for i in range(len(valid_queue.dataset)):
-                
-                
-                if valid_queue.dataset[i][1]!=185250: # choose an image_id
-                    continue
-                print(valid_queue.dataset[i][1])
-                sample = valid_queue.dataset[i]
+            eval_results = evaluate( Arch, valid_queue , config, output_dir)
 
-                img = sample[0].unsqueeze(0)
-                #samples = next(iter(valid_dataloader))
-                #img = samples[0]
-                output = Arch(img)
-                print(img.size(),output.size())
-                visualize_heatamp(img,output,'heatmaps',show_img=False)
-                break
+            if use_multi_gpu :
+                best = save_model(epoch, best, eval_results, Arch.module, optimizer, scheduler, output_dir, logger)
+            else:
 
-    # graph.close()
+                best = save_model(epoch, best, eval_results, Arch, optimizer, scheduler, output_dir, logger)
+            
+
 
 
 if __name__ == '__main__':

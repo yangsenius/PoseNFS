@@ -38,6 +38,12 @@ other optional commands for training
 --visualize // visualize the predicted heatmaps for an image with the training process (per 5 epcohes)
 --show_arch_value   // print the parameters of architecture in the training process
 ```
+#### Distributed multi-gpu training in a single machine (node)
+
+```
+sh distributed.sh
+```
+`nproc_per_node` means how many gpus are used.
 ## Test the model
 ```
 python test.py \

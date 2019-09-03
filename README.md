@@ -4,7 +4,7 @@ This is the repository of [`Pose Neural Fabrics Search (PNFS)`](https://senyang-
 
 # Installation
 
-## Dependices
+## Dependenices
 ```
 pytorch (version >=1.0.0)
 pycocotools

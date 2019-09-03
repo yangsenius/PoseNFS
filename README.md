@@ -1,6 +1,6 @@
 # Introduction
 
-This is the repository of [`Pose Neural Fabrics Search (PNFS)`](https://senyang-ml.github.io/research/2019-pose_neural_fabrics_search.pdf) paper. 
+This is the repository of [`Pose Neural Fabrics Search (PNFS)`](https://senyang-ml.github.io/research/2019-pose_neural_fabrics_search.pdf) paper (coming soon in Arxiv).   
 
 # Installation
 

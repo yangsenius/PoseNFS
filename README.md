@@ -31,10 +31,10 @@ python train.py \
 other optional commands for training
 
 ```
---batchsize 32  // change the default batchsize
---param_flop   // report the parameters and FLOPs
+--batchsize 32  
+--param_flop   // report parameters and FLOPs
 --search search_method_name   // options: ['None','random','sync','first_order_gradient','second_order_gradient']
---debug   // output the augmented input data for check
+--debug   // visualize the input data
 --visualize // visualize the predicted heatmaps for an image with the training process (per 5 epcohes)
 --show_arch_value   // print the parameters of architecture in the training process
 ```

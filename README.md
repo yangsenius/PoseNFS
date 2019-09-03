@@ -35,7 +35,7 @@ other optional commands for training
 --param_flop   // report parameters and FLOPs
 --search search_method_name   // options: ['None','random','sync','first_order_gradient','second_order_gradient']
 --debug   // visualize the input data
---visualize // visualize the predicted heatmaps for an image with the training process (per 5 epcohes)
+--visualize // visualize the predicted heatmaps for an image (per 5 epcohes in training)
 --show_arch_value   // print the parameters of architecture in the training process
 ```
 #### Distributed multi-gpu training in a single machine (node)

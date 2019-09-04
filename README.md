@@ -1,10 +1,10 @@
 # Introduction
 
-This is the repository of [`Pose Neural Fabrics Search (PNFS)`](https://senyang-ml.github.io/research/2019-pose_neural_fabrics_search.pdf) paper. 
+This is the repository of `Pose Neural Fabrics Search (PNFS)` paper (ArXiv version is coming soon).   
 
 # Installation
 
-## Dependices
+## Dependenices
 ```
 pytorch (version >=1.0.0)
 pycocotools
@@ -31,11 +31,11 @@ python train.py \
 other optional commands for training
 
 ```
---batchsize 32  // change the default batchsize
---param_flop   // report the parameters and FLOPs
+--batchsize 32  
+--param_flop   // report parameters and FLOPs
 --search search_method_name   // options: ['None','random','sync','first_order_gradient','second_order_gradient']
---debug   // output the augmented input data for check
---visualize // visualize the predicted heatmaps for an image with the training process (per 5 epcohes)
+--debug   // visualize the input data
+--visualize // visualize the predicted heatmaps for an image (per 5 epcohes in training)
 --show_arch_value   // print the parameters of architecture in the training process
 ```
 #### Distributed multi-gpu training in a single machine (node)

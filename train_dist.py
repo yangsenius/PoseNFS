@@ -147,8 +147,6 @@ def main():
     if arg.param_flop:
         Arch._print_info()
 
-    
-
     if len(arg.gpu)>1:
         use_multi_gpu = True
         
@@ -237,7 +235,6 @@ def main():
             if use_multi_gpu :
                 best = save_model(epoch, best, eval_results, Arch.module, optimizer, scheduler, output_dir, logger)
             else:
-
                 best = save_model(epoch, best, eval_results, Arch, optimizer, scheduler, output_dir, logger)
             
 

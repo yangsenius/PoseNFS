@@ -78,7 +78,6 @@ def main():
     config.test.batchsize = 128
     config.model.margin_to_border = arg.margin
 
-
     logger.info('------------------------------ configuration ---------------------------')
     logger.info('\n==> available {} GPUs , numbers are {}\n'.format(torch.cuda.device_count(),os.environ["CUDA_VISIBLE_DEVICES"]))
     logger.info(pprint.pformat(config))
@@ -103,7 +102,6 @@ def main():
         group._show_alpha()
         group._show_beta()
    
-
     if arg.test_model:
         logger.info('\n===> load ckpt in : {}'.format(arg.test_model))
         Arch.load_state_dict(torch.load(arg.test_model))
@@ -116,8 +114,6 @@ def main():
     else:
         logger.info('\n===>no ckpt is found, use the initial model ...')
         #raise ValueError
-
-
     #logger.info(Arch.backbone.alphas)
 
     logger.info("=========>Architecture's parameters")
@@ -140,10 +136,7 @@ def main():
                                         mean=[0.485, 0.456, 0.406],
                                         std=[0.229, 0.224, 0.225])
                             ]))
-    
     #test_img(valid_dataset,output_dir)
-
-    
     valid_dt_dataset =dataset_(config,config.images_root_dir,
                             config.person_detection_results_path,
                             mode='dt',
@@ -159,9 +152,7 @@ def main():
 
         logger.info("\n >>> use detection results ")
         valid_dataloader = torch.utils.data.DataLoader(valid_dt_dataset, batch_size = config.test.batchsize, shuffle = False , num_workers = 4 , pin_memory=True )
-    
     else:
-
         logger.info("\n >>> use groundtruth bbox ")
         valid_dataloader = torch.utils.data.DataLoader(valid_dataset, batch_size = config.test.batchsize, shuffle = False , num_workers = 4 , pin_memory=True )
     
@@ -207,7 +198,6 @@ def test_img(dataset,output_dir):
     print(path)
     cv2.imwrite(path,image*255)
     cv2.imwrite(path_flip,image_flip*255)
-
 
 if __name__=='__main__':
     main()

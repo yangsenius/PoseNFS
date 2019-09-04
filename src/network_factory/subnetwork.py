@@ -61,9 +61,6 @@ class Sub_Arch(Meta_Arch):
         if self.search_beta:
             self._arch_parameters .append(self.betas)
 
-
-       
-       
         #self.final_layer_reduce = [self.Channels[0],self.out_dim]
         if self.vector_in_pixel :
 

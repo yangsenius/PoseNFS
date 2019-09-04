@@ -51,7 +51,6 @@ class BasicBlock(nn.Module):
 
         return out
 
-
 class Bottleneck(nn.Module):
     expansion = 4
 
@@ -92,7 +91,6 @@ class Bottleneck(nn.Module):
 
         return out
 
-
 class ResNet(nn.Module):
 
     def __init__(self, block, layers ,heatmap_channels,feature_num=4,frozen_resnet=False,**kwargs):
@@ -124,15 +122,13 @@ class ResNet(nn.Module):
             for param in self.parameters():
                 param.requires_grad = False
 
-
     def _make_layer(self, block, planes, blocks, stride=1):
         downsample = None
         if stride != 1 or self.inplanes != planes * block.expansion:
             downsample = nn.Sequential(
                 nn.Conv2d(self.inplanes, planes * block.expansion,
                           kernel_size=1, stride=stride, bias=False),
-                nn.BatchNorm2d(planes * block.expansion, momentum=BN_MOMENTUM),
-            )
+                nn.BatchNorm2d(planes * block.expansion, momentum=BN_MOMENTUM), )
 
         layers = []
         layers.append(block(self.inplanes, planes, stride, downsample))
@@ -141,7 +137,6 @@ class ResNet(nn.Module):
             layers.append(block(self.inplanes, planes))
 
         return nn.Sequential(*layers)
-
 
     def forward(self, x):
 
@@ -158,7 +153,6 @@ class ResNet(nn.Module):
             f_16 = self.layer3(f_8)
         if self.feature_num ==4:
             f_32 = self.layer4(f_16 )
-
 
         if self.feature_num==0:
             return x
@@ -180,7 +174,6 @@ class ResNet(nn.Module):
         else:
             logger.info('=> no resnet imagenet pretrained model!')
             
-
 
 resnet_spec = {18: (BasicBlock, [2, 2, 2, 2]),
                34: (BasicBlock, [3, 4, 6, 3]),

@@ -25,9 +25,6 @@ def Dataloaders(search_strategy,config,arg):
                                 mode ='val',
                                 transform = data_normalize)
 
-
-
-
     if search_strategy in ['None','sync','random'] :
         return normal_dataloader(train_dataset,valid_dataset,config,arg)
     else:
@@ -35,18 +32,9 @@ def Dataloaders(search_strategy,config,arg):
                             split_for_train = config.train.split_for_train,
                             split_for_valid = config.train.split_for_archvalid)
         
-    #return train_queue,arch_queue,valid_queue
-    
-        
-
-
-
-
-
 def split_for_nas(train_dataset,valid_dataset,config,split_for_train=2,split_for_valid=1):
     assert type(split_for_train)==type(split_for_valid)==int
     assert split_for_train>=split_for_valid
-
      # keep the same iterations
     factor = int(split_for_train/split_for_valid)
     
@@ -68,7 +56,6 @@ def split_for_nas(train_dataset,valid_dataset,config,split_for_train=2,split_for
     
     logger.info("batchsize  for train={} val={}(train for arch_parameters)".format(train_batch,valid_batch))
     logger.info("iterations for train={} val={}(train for arch_parameters)".format(train_iters,valid_iters))
-
 
     num_workers = config.num_workers
     pin_memory = True
@@ -94,11 +81,9 @@ def normal_dataloader(train_dataset,valid_dataset,config,arg):
     pin_memory = True
     logger.info("\n num_workers of dataloader is {}".format(num_workers))
 
-
     if arg.distributed:
         train_dist_sampler =  DistributedSampler(train_dataset)
-        #valid_sampler_dist =  DistributedSampler(valid_dataset)
-        
+        #valid_sampler_dist =  DistributedSampler(valid_dataset)   
     else:
         train_dist_sampler = None
 
@@ -109,14 +94,11 @@ def normal_dataloader(train_dataset,valid_dataset,config,arg):
                     shuffle = (train_dist_sampler is None), 
                     sampler= train_dist_sampler
                     )
-
     valid_queue = torch.utils.data.DataLoader(valid_dataset, 
                     batch_size = config.train.batchsize, 
                     num_workers = num_workers ,   
                     pin_memory=pin_memory , 
                     shuffle = False, )
-
-    
 
     if arg.distributed:
         return train_queue ,None, valid_queue ,train_dist_sampler

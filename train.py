@@ -25,9 +25,7 @@ from src.utils import   save_batch_image_with_joints,\
                     filter_arch_parameters, \
                     visualize_heatamp
 
-
 from tensorboardX import SummaryWriter
-
 
 def args():
 
@@ -119,7 +117,6 @@ def main():
         logger.info("==>random seed is {}".format(config.train.random_seed))
         np.random.seed(config.train.random_seed)
         torch.manual_seed(config.train.random_seed)
-
         Arch.arch_parameters_random_search()
 
     if arg.param_flop:
@@ -136,11 +133,8 @@ def main():
         use_multi_gpu = False
         Arch = Arch.cuda()
 
-    
     Search = Search_Arch(Arch.module, config) if use_multi_gpu else Search_Arch(Arch, config)# Arch.module for nn.DataParallel
-
     search_strategy = config.train.arch_search_strategy
-
     train_queue, arch_queue, valid_queue = Dataloaders(search_strategy,config,arg)
     #Note: if the search strategy is `None` or `SYNC`, the arch_queue is None!
 
@@ -196,8 +190,7 @@ def main():
         ## visualize_heatamp 
         if arg.visualize and epoch % 5 ==0:
             for i in range(len(valid_queue.dataset)):
-                
-                
+                              
                 if valid_queue.dataset[i][1]!=185250: # choose an image_id
                     continue
                 print(valid_queue.dataset[i][1])

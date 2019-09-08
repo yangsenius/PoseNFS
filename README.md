@@ -15,7 +15,7 @@ scikit-image
 ## Data preparation
 Data preparation instruction of `MPII` and `COCO` dataset, please see the repository [https://github.com/microsoft/human-pose-estimation.pytorch](https://github.com/microsoft/human-pose-estimation.pytorch#installation).
 
-# Steps
+# Usage
 
 ## Create the `o` directory to reserve each experiment's output
 ```
@@ -96,14 +96,13 @@ subnetwork_config:
 
 #### Body Parts Mode
 The body keypoints assignment for different parts is defined in [`src/network_factory/body_parts.py`](src/network_factory/body_parts.py)
-The partion type of body parts can have more possibilities.
 
 #### Vector Representation
 
-About the `vector in pixel` method, we provide two convolutional mode `Conv2d` and `Conv3d` to implement the idea of how to construct the vector representation (`5D-Tensor`) of keypoint in [`src/network_factory/subnetwork.py`](src/network_factory/subnetwork.py). We use the `Conv2d` mode (reshape `5D-Tensor` to `4D-Tensor`) by default.
+About the `vector in pixel` method, we provide two types of convolutional mode `Conv2d` and `Conv3d` to implement how to construct the vector representation (`5D-Tensor`) of keypoint in [`src/network_factory/subnetwork.py`](src/network_factory/subnetwork.py). We use the `Conv2d` mode (reshape `5D-Tensor` to `4D-Tensor`) by default.
 ## Exploration
 
 - We indicate that the way of construting the vector represntation can be further explored in other fashions as long as the norm of the vector is under supervision.
-- The partion type of body parts can have more possibilities. 
+- There will be more possibilities about body parts mode. 
 - The configurations of subnetworks for different parts can also be different.
 - More potential cutomized computing units can be defined as candidate operations in [`src/architecture/operators.py`](src/architecture/operators.py).

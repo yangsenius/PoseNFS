@@ -31,7 +31,7 @@ class Sub_Arch(Meta_Arch):
 
         self.vector_dim = cell_config['vector_dim']
         self.vector_conv_mode = cell_config['convolution_mode']
-
+        self.one_shot_search = cell_config['one-shot-search']
         # use backbone to replace the 3 layer cells ,so make cell_fabrics[0:cut_layers_num] == []
         for i,layer in enumerate(self.cell_fabrics):
 
@@ -45,7 +45,15 @@ class Sub_Arch(Meta_Arch):
                     self.Num[i] =0
 
         self.cells_num = sum(self.Num)
-        self.alphas = nn.Parameter(torch.randn(self.k, self.num_ops))
+
+        if self.one_shot_search:
+
+            self.alphas = nn.Parameter(torch.randn(self.k, self.num_ops))
+            
+        else:
+
+            self.alphas = nn.Parameter(torch.randn(self.cells_num, self.k, self.num_ops))
+
         # beta control the fabrics outside the cell
         self.betas  = nn.Parameter(torch.randn(self.cells_num,  self.types_c))
 
@@ -122,9 +130,12 @@ class Sub_Arch(Meta_Arch):
 
                 #prev_prev = prev_prev_layer[i] if i<Num[j-2] else prev_paral
                 #prev_prev = torch.zeros_like(prev_prev) # cancel prev_prev!!
-                with torch.autograd.set_detect_anomaly(True):
+                if self.one_shot_search:
                     output = cell(prev_paral, prev_above, prev_below , prev_prev,
                                     self.alphas, self.betas[cell_id])
+                else:
+                    output = cell(prev_paral, prev_above, prev_below , prev_prev,
+                                    self.alphas[cell_id], self.betas[cell_id])
                 cell_id += 1
                 
                 OUTPUTS.append(output)

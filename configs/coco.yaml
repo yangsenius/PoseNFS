@@ -57,7 +57,7 @@ model:
 
             search_alpha: true
             search_beta: true
-            operators: ["skip_connect", "Sep_Conv_3x3","Atr_Conv_3x3","max_pool_3x3"]  #'conv_3x3'] # "Atr_Conv_3x3"
+            operators: ["skip_connect","Atr_Conv_3x3","max_pool_3x3"]  #'conv_3x3'] # "Atr_Conv_3x3"  "Sep_Conv_3x3"
  
             depth: 7
             cut_layers_num: 4  # first several layers
@@ -75,6 +75,8 @@ person_detection_results_path: '/data1/public_dataset/coco/person_detection_resu
 #COCO_val2017_detections_AP_H_56_person.json
 
 train:
+
+    one-shot-search: True
     batchsize: 20
 
     #filter_arch_parameters: True # do not update arch_parameters when update weight in trainset
@@ -95,7 +97,7 @@ train:
     w_weight_decay: 0.0003
 
     # FOR MultiStepLR
-    scheduler_name: CosineAnnealingLR  #MultiStepLR
+    scheduler_name: MultiStepLR #CosineAnnealingLR  #MultiStepLR
     LR_STEP: [30,60,80,130]
 
     LR_FACTOR: 0.25

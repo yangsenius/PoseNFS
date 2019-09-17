@@ -7,7 +7,7 @@ model:
     backbone_net_name: 'resnet'  # or 'meta_arch' or 'mobilenet_v2'
     backbone_layers: 50 #resnet
     backbone_feature_num: 4 # resnet
-    backbone_pretrained_path: '/data1/public_dataset/resnet_pretrained/resnet50-19c8e357.pth'
+    backbone_pretrained_path: '/data/pretrained_model/resnet50-19c8e357.pth'
     init_weights: True
 
     dataset_name: 'coco'
@@ -48,7 +48,8 @@ model:
         dataset_name: 'coco'
         parts_num : 3
         cell_config:
-        
+            
+            one-shot-search: True
             ##### vector representation
             vector_in_pixel : True
             vector_dim: 8
@@ -57,7 +58,7 @@ model:
 
             search_alpha: true
             search_beta: true
-            operators: ["skip_connect","Atr_Conv_3x3","max_pool_3x3"]  #'conv_3x3'] # "Atr_Conv_3x3"  "Sep_Conv_3x3"
+            operators: ["zero", "skip_connect","Atr_Conv_3x3", "Sep_Conv_3x3"]  #'conv_3x3'] # "Atr_Conv_3x3"
  
             depth: 7
             cut_layers_num: 4  # first several layers
@@ -67,16 +68,15 @@ model:
             input_nodes_num: 1
 
 
-images_root_dir: '/data1/public_dataset/coco/images/'
-annotation_root_dir: '/data1/public_dataset/coco/annotations/'
-person_detection_results_path: '/data1/public_dataset/coco/person_detection_results/COCO_test-dev2017_detections_AP_H_609_person.json'
+images_root_dir: '/data/dataset/coco/images/'
+annotation_root_dir: '/data/dataset/coco/annotations/'
+person_detection_results_path: '/data/dataset/coco/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'
 
 #COCO_test-dev2017_detections_AP_H_609_person
 #COCO_val2017_detections_AP_H_56_person.json
 
 train:
 
-    one-shot-search: True
     batchsize: 20
 
     #filter_arch_parameters: True # do not update arch_parameters when update weight in trainset
@@ -97,8 +97,8 @@ train:
     w_weight_decay: 0.0003
 
     # FOR MultiStepLR
-    scheduler_name: MultiStepLR #CosineAnnealingLR  #MultiStepLR
-    LR_STEP: [30,60,80,130]
+    scheduler_name: MultiStepLR  #MultiStepLR
+    LR_STEP: [50, 90, 120, 150]
 
     LR_FACTOR: 0.25
 
@@ -128,7 +128,7 @@ train:
 
 test:
     
-    dataset_name: 'test' # 'val' or 'test'
+    dataset_name: 'val' # 'val' or 'test'
     batchsize: 128
 
     bbox_score_threshold: 0.0

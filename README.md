@@ -103,18 +103,20 @@ The body keypoints assignment for different parts is defined in [`src/network_fa
 
 We provide two types of convolutional mode `Conv2d` and `Conv3d` in [`src/network_factory/subnetwork.py`](src/network_factory/subnetwork.py) to construct the vector representation (`5D-Tensor`) of keypoint. We use the `Conv2d` mode (reshape `5D-Tensor` to `4D-Tensor`) by default.
 
-## Exploration
+#### Exploration
 
 - More potential cutomized computing units can be defined as candidate operations in [`src/architecture/operators.py`](src/architecture/operators.py).
 
-# Citation
+### Citation
 
 If you use this code in your research, please consider citing:
 
+```
 @inproceedings{yang2019pnfs,
   title={Pose Neural Fabrics Search},
   author={Yang, Sen and Yang, Wankou and Cui, Zhen},
   journal={arXiv preprint arXiv:1909.07068},
   year={2019}
 }
+```
 

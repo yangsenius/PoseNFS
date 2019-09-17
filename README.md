@@ -1,19 +1,21 @@
 # Introduction
 
-This is the repository of `Pose Neural Fabrics Search (PNFS)` paper (ArXiv version is coming soon).   
+This is the PyTorch code of `Pose Neural Fabrics Search (PNFS)` paper, [arxiv 1909.07068](https://arxiv.org/abs/1909.07068).   
 
 # Installation
 
 ## Dependenices
 ```
-pytorch (version >=1.0.0)
+torch (version >=1.0.0)
+torchvision
 pycocotools
 easydict
 scikit-image
+
 ```
 
 ## Data preparation
-Data preparation instruction of `MPII` and `COCO` dataset, please see the repository [https://github.com/microsoft/human-pose-estimation.pytorch](https://github.com/microsoft/human-pose-estimation.pytorch#installation).
+We follow the steps of [this repository](https://github.com/microsoft/human-pose-estimation.pytorch) for preparing `MPII` and `COCO` dataset, please see the [https://github.com/microsoft/human-pose-estimation.pytorch#data-preparation](https://github.com/microsoft/human-pose-estimation.pytorch#data-preparation).
 
 # Usage
 
@@ -99,10 +101,20 @@ The body keypoints assignment for different parts is defined in [`src/network_fa
 
 #### Vector Representation
 
-About the `vector in pixel` method, we provide two types of convolutional mode `Conv2d` and `Conv3d` to implement how to construct the vector representation (`5D-Tensor`) of keypoint in [`src/network_factory/subnetwork.py`](src/network_factory/subnetwork.py). We use the `Conv2d` mode (reshape `5D-Tensor` to `4D-Tensor`) by default.
+We provide two types of convolutional mode `Conv2d` and `Conv3d` in [`src/network_factory/subnetwork.py`](src/network_factory/subnetwork.py) to construct the vector representation (`5D-Tensor`) of keypoint. We use the `Conv2d` mode (reshape `5D-Tensor` to `4D-Tensor`) by default.
+
 ## Exploration
 
-- We indicate that the way of construting the vector represntation can be further explored in other fashions as long as the norm of the vector is under supervision.
-- There will be more possibilities about body parts mode. 
-- The configurations of subnetworks for different parts can also be different.
 - More potential cutomized computing units can be defined as candidate operations in [`src/architecture/operators.py`](src/architecture/operators.py).
+
+# Citation
+
+If you use this code in your research, please consider citing:
+
+@inproceedings{yang2019pnfs,
+  title={Pose Neural Fabrics Search},
+  author={Yang, Sen and Yang, Wankou and Cui, Zhen},
+  journal={arXiv preprint arXiv:1909.07068},
+  year={2019}
+}
+

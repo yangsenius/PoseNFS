@@ -8,10 +8,12 @@ This repository is our PyTorch implementation of the paper [Pose Neural Fabrics 
 ```
 torch (version >=1.0.0)
 torchvision
+opencv-python
 pycocotools
-easydict
+scipy
 scikit-image
-
+pyyaml
+easydict
 ```
 
 ## Data preparation

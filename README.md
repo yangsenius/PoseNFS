@@ -1,21 +1,21 @@
-# Introduction
+## Introduction
 
 This repository is our PyTorch implementation of the paper [Pose Neural Fabrics Search (PNFS)](https://arxiv.org/pdf/1909.07068.pdf) (*[arXiv 1909.07068](https://arxiv.org/abs/1909.07068)*).   
 
-# Usage
+## Usage
 
-## Depedencies
+### Depedencies
 
-Install packages mentioned in `requirements.txt`
+Install packages mentioned in [`requirements.txt`](requirements.txt).
 
-## Data preparation
+### Data preparation
 We follow the steps of [this repository](https://github.com/microsoft/human-pose-estimation.pytorch) for preparing `MPII` and `COCO` dataset, please see the [https://github.com/microsoft/human-pose-estimation.pytorch#data-preparation](https://github.com/microsoft/human-pose-estimation.pytorch#data-preparation).
 
-## Create the `o` directory to reserve each experiment's output
+### Create the `o` directory to reserve each experiment's output
 ```
 mkdir o  
 ```
-## Train the model
+### Train the model
 ```
 python train.py \
 --cfg configs/your_experiment.yaml \
@@ -38,7 +38,7 @@ other optional commands for training
 sh distributed.sh
 ```
 `nproc_per_node` means how many gpus are used.
-## Test the model
+### Test the model
 ```
 python test.py \
 --cfg configs/your_experiment.yaml \
@@ -56,7 +56,7 @@ other optional commands for testing
 --use_dt   // use the detection results of COCO val set or test-dev set
 ```
 
-## Detailed Settings
+### Detailed Settings
 
 All detailed settings of the model is recorded in the [`configs/*.yaml`](configs/).
 

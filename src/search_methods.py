@@ -1,3 +1,4 @@
+# modified from https://github.com/quark0/darts/blob/master/cnn/architect.py
 import  torch
 import  numpy as np
 from    torch import optim, autograd

@@ -409,7 +409,7 @@ class dataset_(Dataset):
         for id,points in enumerate(keypoints):
             if points[2]==0:
                 continue
-            vis = points[2] # prevent python value bug
+            vis = points[2] # avoid python value bug
             points[2] = 1
             keypoints[id][0:2] = np.dot(affine_matrix, points)[0:2]
             keypoints[id][2] = vis 

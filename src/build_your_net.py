@@ -1,4 +1,4 @@
-from thop import profile
+#from thop import profile
 import torch
 
 from .architecture.meta_arch import Meta_Arch

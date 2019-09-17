@@ -1,4 +1,3 @@
-# Copyright (c) SEU - PatternRec
 # Licensed under the MIT License.
 # Written by Sen Yang (yangsenius@seu.edu.cn)
 

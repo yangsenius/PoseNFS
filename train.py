@@ -25,8 +25,6 @@ from src.utils import   save_batch_image_with_joints,\
                     filter_arch_parameters, \
                     visualize_heatamp
 
-from tensorboardX import SummaryWriter
-
 def args():
 
     parser = argparse.ArgumentParser(description='Architecture Search')

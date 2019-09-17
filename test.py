@@ -12,7 +12,7 @@ import logging
 import argparse
 from timeit import default_timer as timer
 import datetime
-from thop import profile
+#from thop import profile
 
 from src.build_your_net import bulid_up_network
 

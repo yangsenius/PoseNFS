@@ -2,24 +2,14 @@
 
 This repository is our PyTorch implementation of the paper [Pose Neural Fabrics Search (PNFS)](https://arxiv.org/pdf/1909.07068.pdf) (*[arXiv 1909.07068](https://arxiv.org/abs/1909.07068)*).   
 
-# Installation
+# Usage
 
-## Dependenices
-```
-torch (version >=1.0.0)
-torchvision
-opencv-python
-pycocotools
-scipy
-scikit-image
-pyyaml
-easydict
-```
+## Depedencies
+
+Install packages mentioned in `requirements.txt`
 
 ## Data preparation
 We follow the steps of [this repository](https://github.com/microsoft/human-pose-estimation.pytorch) for preparing `MPII` and `COCO` dataset, please see the [https://github.com/microsoft/human-pose-estimation.pytorch#data-preparation](https://github.com/microsoft/human-pose-estimation.pytorch#data-preparation).
-
-# Usage
 
 ## Create the `o` directory to reserve each experiment's output
 ```
@@ -28,7 +18,7 @@ mkdir o
 ## Train the model
 ```
 python train.py \
---cfg configs/our3.yaml \
+--cfg configs/your_experiment.yaml \
 --exp_name o/your_train_experiment_name \
 --gpu 0,1 
 ```
@@ -51,7 +41,7 @@ sh distributed.sh
 ## Test the model
 ```
 python test.py \
---cfg configs/ours3.yaml \
+--cfg configs/your_experiment.yaml \
 --exp_name o/your_test_experiment_name \
 --gpu 0,1 \
 --test_model o/path_to_your_saved_model \
@@ -72,7 +62,7 @@ All detailed settings of the model is recorded in the [`configs/*.yaml`](configs
 
 #### Configuration for Fabric-Subnetwork
 
-A snippet of the `*.yaml` for the hyperparameters of subnetworks :
+A snippet example of the `*.yaml` for the hyperparameters of subnetworks :
 ```yaml
 subnetwork_config:
 
@@ -107,7 +97,7 @@ We provide two types of convolutional mode `Conv2d` and `Conv3d` in [`src/networ
 
 #### Exploration
 
-- More potential cutomized computing units can be defined as candidate operations in [`src/architecture/operators.py`](src/architecture/operators.py).
+More potential cutomized computing units can be defined as candidate operations in [`src/architecture/operators.py`](src/architecture/operators.py).
 
 ### Citation
 

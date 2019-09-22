@@ -99,12 +99,12 @@ We provide two types of convolutional mode `Conv2d` and `Conv3d` in [`src/networ
 
 More potential cutomized computing units can be defined as candidate operations in [`src/architecture/operators.py`](src/architecture/operators.py).
 
-### Citation
+## Citation
 
 If you use this code in your research, please consider citing:
 
 ```
-@inproceedings{yang2019pnfs,
+@article{yang2019pose,
   title={Pose Neural Fabrics Search},
   author={Yang, Sen and Yang, Wankou and Cui, Zhen},
   journal={arXiv preprint arXiv:1909.07068},

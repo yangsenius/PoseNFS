@@ -11,6 +11,11 @@ Install packages mentioned in [`requirements.txt`](requirements.txt).
 ### Data preparation
 We follow the steps of [this repository](https://github.com/microsoft/human-pose-estimation.pytorch) for preparing `MPII` and `COCO` dataset, please see the [https://github.com/microsoft/human-pose-estimation.pytorch#data-preparation](https://github.com/microsoft/human-pose-estimation.pytorch#data-preparation).
 
+### Download Pretrained Models
+
+- Resnet-50: [Download](https://download.pytorch.org/models/resnet50-19c8e357.pth), 
+- MobileNet_V2: [Google Drive](https://drive.google.com/open?id=1jlto6HRVD3ipNkAl1lNhDbkBp7HylaqR) from [this repo](https://github.com/tonylins/pytorch-mobilenet-v2).
+- More ...
 ### Create the `o` directory to reserve each experiment's output
 ```
 mkdir o  
@@ -51,7 +56,7 @@ other optional commands for testing
 ```
 --visualize   // visualize the predicted heatmaps
 --param_flop
----margin 1.15  // [1.0,1.5] margin between bbox border and input size when testing 
+---margin 1.25  // [1.0,1.5] margin between bbox border and input size when testing 
 --flip_test   // horizontal flip test
 --use_dt   // use the detection results of COCO val set or test-dev set
 ```

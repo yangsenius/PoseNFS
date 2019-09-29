@@ -75,7 +75,7 @@ class Downsample_Connection(nn.Module):
         self.operation = nn.Sequential(
             nn.Conv2d(channel_in, channel_out, 3, stride = 2, padding= 1 ),
             nn.BatchNorm2d(channel_out,momentum=0.1),
-            nn.ReLU(inplace=True)) # addd
+            #nn.ReLU(inplace=True)) # addd
 
     def forward(self,x):
 
@@ -135,7 +135,7 @@ class Upsample_Connection(nn.Module):
         self.bn = nn.BatchNorm2d(C_out,momentum=0.1)
         assert C_out % 2 ==0
         self.factor = factor
-        self.ups = nn.UpsamplingBilinear2d(scale_factor=factor)
+        #self.ups = nn.UpsamplingBilinear2d(scale_factor=factor)
     def forward(self , x):
         #x = self.conv_1x1(x)
         #x = self.bn(x)

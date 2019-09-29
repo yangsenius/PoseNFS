@@ -7,7 +7,7 @@ model:
     backbone_net_name: 'resnet'  # or 'meta_arch' or 'mobilenet_v2'
     backbone_layers: 50 #resnet
     backbone_feature_num: 4 # resnet
-    backbone_pretrained_path: '/data/pretrained_model/resnet50-19c8e357.pth'
+    backbone_pretrained_path: '/path_to_your_pretrained_model/resnet50-19c8e357.pth'
     init_weights: True
 
     dataset_name: 'coco'  # 'mpii'
@@ -21,7 +21,7 @@ model:
         w: 48
         h: 64
 
-    margin_to_border: 1.15 # >=1
+    margin_to_border: 1.25 # >=1
 
     embedding: False
     squash: True
@@ -78,7 +78,7 @@ person_detection_results_path: '/path_to_your/coco/person_detection_results/COCO
 
 train:
 
-    batchsize: 20
+    batchsize: 24
     random_seed : 2 # for random search
     arch_search_strategy: sync # 'first_order_gradient','random','None','second_order_gradient'
     arch_search_epoch: 0
@@ -94,7 +94,7 @@ train:
 
     # FOR MultiStepLR
     scheduler_name: MultiStepLR  #MultiStepLR # CosineAnnealingLR
-    LR_STEP: [50, 90, 120, 150]
+    LR_STEP: [90, 120, 150]
     LR_FACTOR: 0.25
     
     # CosineAnnealingLR
@@ -118,7 +118,7 @@ train:
     aug_rotation: 45
     aug_flip: true
     
-    aug_occlusion: false 
+    aug_occlusion: false # NOT USED IN PAPER
     occlusion_prob: 0.5
     occlusion_size: [25,25]
     occlusion_nums: 3

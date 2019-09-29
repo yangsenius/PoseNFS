@@ -6,3 +6,4 @@ scipy
 scikit-image
 pyyaml
 easydict
+thop

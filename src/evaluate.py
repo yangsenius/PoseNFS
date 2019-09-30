@@ -79,7 +79,6 @@ def evaluate( model , dataloader , config, output_dir, with_mask = False, use_re
                                                                                     use_refine = False ,
                                                                                     boosting = None,
                                                                                     dataset_name = dataset_name)
-            
             time = timer() - start
 
             # for mpii
@@ -632,7 +631,7 @@ def _print_name_value(name_value, full_arch_name):
     num_values = len(name_value)
     logger.info("results on dataset ...\n")
     logger.info(
-        '| Arch ' +
+        '| Name ' +
         ' '.join(['| {}'.format(name) for name in names]) +
         ' |'
     )

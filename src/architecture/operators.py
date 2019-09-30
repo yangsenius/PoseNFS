@@ -135,7 +135,7 @@ class Upsample_Connection(nn.Module):
         self.bn = nn.BatchNorm2d(C_out,momentum=0.1)
         assert C_out % 2 ==0
         self.factor = factor
-        self.ups = nn.UpsamplingBilinear2d(scale_factor=factor)
+        #self.ups = nn.UpsamplingBilinear2d(scale_factor=factor)
     def forward(self , x):
         #x = self.conv_1x1(x)
         #x = self.bn(x)

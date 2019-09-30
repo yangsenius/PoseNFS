@@ -38,7 +38,7 @@ def args():
     parser.add_argument('--param_flop',     help=' ', action='store_true', default=False)
     
     parser.add_argument('--gpu',       help='gpu ids',  type=str  )
-    parser.add_argument('--margin',       help='margin_to_border',  type=float ,default= 1.15 )
+    parser.add_argument('--margin',       help='margin_to_border',  type=float ,default= 1.25 )
     parser.add_argument('--visualize',       help='visualize',  action='store_true' ,default= False )
     parser.add_argument('--dataset', help='run test.py on which dataset. options: test or val', default='val')
     
@@ -158,7 +158,7 @@ def main():
     
     if arg.visualize:
         for i in range(len(valid_dataset)):
-            imageid = 185250
+            imageid = 185250 # coco val set
             
             if valid_dataset[i][1]!=imageid: # choose an image_id
                 continue

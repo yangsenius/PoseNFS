@@ -1,30 +1,29 @@
-# Introduction
+## Introduction
 
 This is the repository of `Pose Neural Fabrics Search (PNFS)` paper (ArXiv version is coming soon).   
 
-# Installation
+## Usage
 
-## Dependenices
-```
-pytorch (version >=1.0.0)
-pycocotools
-easydict
-scikit-image
-```
+### Depedencies
 
-## Data preparation
-Data preparation instruction of `MPII` and `COCO` dataset, please see the repository [https://github.com/microsoft/human-pose-estimation.pytorch](https://github.com/microsoft/human-pose-estimation.pytorch#installation).
+Install packages mentioned in [`requirements.txt`](requirements.txt).
 
-# Usage
+### Data preparation
+We follow the steps of [this repository](https://github.com/microsoft/human-pose-estimation.pytorch) for preparing `MPII` and `COCO` dataset, please see the [https://github.com/microsoft/human-pose-estimation.pytorch#data-preparation](https://github.com/microsoft/human-pose-estimation.pytorch#data-preparation).
 
-## Create the `o` directory to reserve each experiment's output
+### Download Pretrained Models
+
+- Resnet-50: [Download](https://download.pytorch.org/models/resnet50-19c8e357.pth), 
+- MobileNet_V2: [Google Drive](https://drive.google.com/open?id=1jlto6HRVD3ipNkAl1lNhDbkBp7HylaqR) from [this repo](https://github.com/tonylins/pytorch-mobilenet-v2).
+- More ...
+### Create the `o` directory to reserve each experiment's output
 ```
 mkdir o  
 ```
-## Train the model
+### Train the model
 ```
 python train.py \
---cfg configs/our3.yaml \
+--cfg configs/your_experiment.yaml \
 --exp_name o/your_train_experiment_name \
 --gpu 0,1 
 ```
@@ -44,10 +43,10 @@ other optional commands for training
 sh distributed.sh
 ```
 `nproc_per_node` means how many gpus are used.
-## Test the model
+### Test the model
 ```
 python test.py \
---cfg configs/ours3.yaml \
+--cfg configs/your_experiment.yaml \
 --exp_name o/your_test_experiment_name \
 --gpu 0,1 \
 --test_model o/path_to_your_saved_model \
@@ -57,18 +56,18 @@ other optional commands for testing
 ```
 --visualize   // visualize the predicted heatmaps
 --param_flop
----margin 1.15  // [1.0,1.5] margin between bbox border and input size when testing 
+---margin 1.25  // [1.0,1.5] margin between bbox border and input size when testing 
 --flip_test   // horizontal flip test
 --use_dt   // use the detection results of COCO val set or test-dev set
 ```
 
-## Detailed Settings
+### Detailed Settings
 
 All detailed settings of the model is recorded in the [`configs/*.yaml`](configs/).
 
 #### Configuration for Fabric-Subnetwork
 
-A snippet of the `*.yaml` for the hyperparameters of subnetworks :
+A snippet example of the `*.yaml` for the hyperparameters of subnetworks :
 ```yaml
 subnetwork_config:
 
@@ -102,7 +101,18 @@ The body keypoints assignment for different parts is defined in [`src/network_fa
 About the `vector in pixel` method, we provide two types of convolutional mode `Conv2d` and `Conv3d` to implement how to construct the vector representation (`5D-Tensor`) of keypoint in [`src/network_factory/subnetwork.py`](src/network_factory/subnetwork.py). We use the `Conv2d` mode (reshape `5D-Tensor` to `4D-Tensor`) by default.
 ## Exploration
 
-- We indicate that the way of construting the vector represntation can be further explored in other fashions as long as the norm of the vector is under supervision.
-- There will be more possibilities about body parts mode. 
-- The configurations of subnetworks for different parts can also be different.
-- More potential cutomized computing units can be defined as candidate operations in [`src/architecture/operators.py`](src/architecture/operators.py).
+More potential cutomized computing units can be defined as candidate operations in [`src/architecture/operators.py`](src/architecture/operators.py).
+
+## Citation
+
+If you use this code in your research, please consider citing:
+
+```
+@article{yang2019pose,
+  title={Pose Neural Fabrics Search},
+  author={Yang, Sen and Yang, Wankou and Cui, Zhen},
+  journal={arXiv preprint arXiv:1909.07068},
+  year={2019}
+}
+```
+

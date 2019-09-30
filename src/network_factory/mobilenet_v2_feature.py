@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import math
 import logging
+import os
 logger = logging.getLogger(__name__)
 
 def conv_bn(inp, oup, stride):
@@ -155,11 +156,12 @@ class MobileNetV2(nn.Module):
                 m.bias.data.zero_()
 
         if use_pretrained == True:
+            assert os.path.exists(pretrained), "{} does not exist".format(pretrained)
             pretrained_state_dict = torch.load(pretrained)
-            logger.info('=> loading mobilenet_v2 pretrained model {}'.format(pretrained))
+            logger.info('==> NOTE: loading mobilenet_v2 pretrained model {}'.format(pretrained))
             self.load_state_dict(pretrained_state_dict, strict=False)
         else: 
-            logger.info('=> no mobilenet_v2 imagenet pretrained model!')
+            logger.info('=> no mobilenet_v2 imagenet pretrained model! please download in https://drive.google.com/open?id=1jlto6HRVD3ipNkAl1lNhDbkBp7HylaqR')
     
 
 

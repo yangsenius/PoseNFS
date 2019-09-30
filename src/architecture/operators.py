@@ -74,8 +74,8 @@ class Downsample_Connection(nn.Module):
         super(Downsample_Connection,self).__init__()
         self.operation = nn.Sequential(
             nn.Conv2d(channel_in, channel_out, 3, stride = 2, padding= 1 ),
-            nn.BatchNorm2d(channel_out,momentum=0.1),
-            nn.ReLU(inplace=True)) # addd
+            nn.BatchNorm2d(channel_out,momentum=0.1),)
+            #nn.ReLU(inplace=True)) # addd
 
     def forward(self,x):
 

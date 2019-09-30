@@ -95,7 +95,7 @@ def normal_dataloader(train_dataset,valid_dataset,config,arg):
                     sampler= train_dist_sampler
                     )
     valid_queue = torch.utils.data.DataLoader(valid_dataset, 
-                    batch_size = config.train.batchsize, 
+                    batch_size = config.test.batchsize, 
                     num_workers = num_workers ,   
                     pin_memory=pin_memory , 
                     shuffle = False, )

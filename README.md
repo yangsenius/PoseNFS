@@ -1,6 +1,6 @@
 ## Introduction
 
-This is the repository of `Pose Neural Fabrics Search (PNFS)` paper (ArXiv version is coming soon).   
+This repository is our PyTorch implementation of the paper [Pose Neural Fabrics Search (PNFS)](https://arxiv.org/pdf/1909.07068.pdf) ([arXiv 1909.07068](https://arxiv.org/abs/1909.07068)).  
 
 ## Usage
 

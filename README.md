@@ -2,6 +2,14 @@
 
 This repository is our PyTorch implementation of the paper [Pose Neural Fabrics Search (PNFS)](https://arxiv.org/pdf/1909.07068.pdf) ([arXiv 1909.07068](https://arxiv.org/abs/1909.07068)).  
 
+Neural architecture search space at macro and micro level:
+
+<img src="https://senyang-ml.github.io/2019/08/26/Pose-Neural-Fabrics-Search/cell-based_fabric.jpg" width="30%"><img src="https://senyang-ml.github.io/2019/08/26/Pose-Neural-Fabrics-Search/cell.jpg" width="50%">
+
+The Pose Neural Fabrics Search framework: 
+
+<img src="https://senyang-ml.github.io/2019/08/26/Pose-Neural-Fabrics-Search/pnfs_framework.jpg" width="80%">
+
 ## Usage
 
 ### Depedencies

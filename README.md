@@ -4,19 +4,19 @@ This repository is our PyTorch implementation of the paper [Pose Neural Fabrics 
 
 Neural architecture search space at macro and micro level:
 
-<img src="https://senyang-ml.github.io/2019/08/26/Pose-Neural-Fabrics-Search/cell-based_fabric.jpg" width="30%"><img src="https://senyang-ml.github.io/2019/08/26/Pose-Neural-Fabrics-Search/cell.jpg" width="50%">
+<img src="https://senyang-ml.github.io/2019/08/26/Pose-Neural-Fabrics-Search/cell-based_fabric.jpg" width="40%"><img src="https://senyang-ml.github.io/2019/08/26/Pose-Neural-Fabrics-Search/cell.jpg" width="60%">
 
 The Pose Neural Fabrics Search framework: 
 
-<img src="https://senyang-ml.github.io/2019/08/26/Pose-Neural-Fabrics-Search/pnfs_framework.jpg" width="80%">
+<img src="https://senyang-ml.github.io/2019/08/26/Pose-Neural-Fabrics-Search/pnfs_framework.jpg" width="100%">
 
 ## Usage
 
-### Depedencies
+### Dependencies
 
 Install packages mentioned in [`requirements.txt`](requirements.txt).
 
-### Data preparation
+### Data Preparation
 We follow the steps of [this repository](https://github.com/microsoft/human-pose-estimation.pytorch) for preparing `MPII` and `COCO` dataset, please see the [https://github.com/microsoft/human-pose-estimation.pytorch#data-preparation](https://github.com/microsoft/human-pose-estimation.pytorch#data-preparation).
 
 ### Download Pretrained Models
@@ -24,7 +24,7 @@ We follow the steps of [this repository](https://github.com/microsoft/human-pose
 - Resnet-50: [Download](https://download.pytorch.org/models/resnet50-19c8e357.pth), 
 - MobileNet_V2: [Google Drive](https://drive.google.com/open?id=1jlto6HRVD3ipNkAl1lNhDbkBp7HylaqR) from [this repo](https://github.com/tonylins/pytorch-mobilenet-v2).
 - More ...
-### Create the `o` directory to reserve each experiment's output
+### Create the `o` directory to preserve each experiment's output 
 ```
 mkdir o  
 ```
@@ -106,8 +106,8 @@ The body keypoints assignment for different parts is defined in [`src/network_fa
 
 #### Vector Representation
 
-About the `vector in pixel` method, we provide two types of convolutional mode `Conv2d` and `Conv3d` to implement how to construct the vector representation (`5D-Tensor`) of keypoint in [`src/network_factory/subnetwork.py`](src/network_factory/subnetwork.py). We use the `Conv2d` mode (reshape `5D-Tensor` to `4D-Tensor`) by default.
-## Exploration
+We provide two types of convolutional mode `Conv2d` and `Conv3d` to show how to construct the vector representation (`5D-Tensor`) of keypoint in [`src/network_factory/subnetwork.py`](src/network_factory/subnetwork.py). We use the `Conv2d` mode (reshape `5D-Tensor` to `4D-Tensor`) by default.
+#### Exploration
 
 More potential cutomized computing units can be defined as candidate operations in [`src/architecture/operators.py`](src/architecture/operators.py).
 

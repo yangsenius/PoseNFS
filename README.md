@@ -25,7 +25,6 @@ We follow the steps of [this repository](https://github.com/microsoft/human-pose
 - MobileNet-V2 (1.3M): [Google Drive](https://drive.google.com/open?id=1jlto6HRVD3ipNkAl1lNhDbkBp7HylaqR) from [this repo](https://github.com/tonylins/pytorch-mobilenet-v2).
 - HRNet-W32-stem~stage3 (8.8M): [Google Drive](https://drive.google.com/drive/folders/1hOTihvbyIxsm5ygDpbUuJ7O_tzv4oXjC?usp=sharing) from [this repo](https://github.com/leoxiaobin/deep-high-resolution-net.pytorch). 
 - More ...
-
 ### Create the `o` directory to preserve each experiment's output 
 ```
 mkdir o  
@@ -112,7 +111,7 @@ subnetwork_config:
 |--|--|--|--|
 |MobileNet-V2 (1.3M) + Neural Fabricx3|6.1M/4.0G/384x288|67.4-COCO Test-dev|[Google Drive](https://drive.google.com/drive/folders/1-GWqHDAwfVoPVaQPx30yPAdigC72FU4X)|
 |HRNet-w32-stem~stage3 (8.8M) + Neural Fabricx5|16.4M/9.4G/256x256|90.1-MPII Val-set|[Google Drive]((https://drive.google.com/drive/folders/1-GWqHDAwfVoPVaQPx30yPAdigC72FU4X))|
-See the [paper](https://senyang-ml.github.io/2019/08/26/Pose-Neural-Fabrics-Search/2019-pose_neural_fabrics_search.pdf) (newly) or configs for more details.
+See the paper ([newly](https://senyang-ml.github.io/2019/08/26/Pose-Neural-Fabrics-Search/2019-pose_neural_fabrics_search.pdf)) or configs for more details.
 
 #### Body Parts Mode
 The body keypoints assignment for different parts is defined in [`src/network_factory/body_parts.py`](src/network_factory/body_parts.py)

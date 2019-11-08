@@ -107,10 +107,11 @@ subnetwork_config:
 ```
 
 #### Model
-|BackBone + Head|Params/FLOPs/Input Size|Result|Download|
+|BackBone + Head|Params/FLOPs|Result|Download|
 |--|--|--|--|
-|MobileNet-V2 (1.3M) + Neural Fabricx3|6.1M/4.0G/384x288|67.4-COCO Test-dev|[Google Drive](https://drive.google.com/drive/folders/1-GWqHDAwfVoPVaQPx30yPAdigC72FU4X)|
-|HRNet-w32-stem~stage3 (8.8M) + Neural Fabricx5|16.4M/9.4G/256x256|90.1-MPII Val-set|[Google Drive]((https://drive.google.com/drive/folders/1-GWqHDAwfVoPVaQPx30yPAdigC72FU4X))|
+|MobileNet-V2 + Neural Fabricx3|6.1M/4.0G|67.4-COCO Test-dev|[Google Drive](https://drive.google.com/drive/folders/1-GWqHDAwfVoPVaQPx30yPAdigC72FU4X)|
+|HRNet-w32-stem~stage3 + Neural Fabricx5|16.4M/9.4G|90.1-MPII Val-set|[Google Drive](https://drive.google.com/drive/folders/1-GWqHDAwfVoPVaQPx30yPAdigC72FU4X)|
+
 See the paper ([newly](https://senyang-ml.github.io/2019/08/26/Pose-Neural-Fabrics-Search/2019-pose_neural_fabrics_search.pdf)) or configs for more details.
 
 #### Body Parts Mode

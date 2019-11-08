@@ -55,117 +55,51 @@ def parts_mode(dataset_name,parts_num):
         raise ValueError
 
     parts = {}
-    
-    assert parts_num == 1 or parts_num == 3 or parts_num == 8 
+    assert parts_num == 1 or parts_num == 3 or parts_num == 8 or parts_num ==5
 
     if parts_num ==1:
-
         parts['whole_body'] = [k(name) for name in parts_names]
-
     
+    ######################
     if parts_num == 3:
 
-        parts['upper_limb_part'] = [k('l_shoulder'),
-                                    k('r_shoulder'),
-                                    k('l_elbow'), 
-                                    k('r_elbow'),
-                                    k('l_wrist'),
-                                    k('r_wrist')]
-
-        if dataset_name == 'mpii':
-
-            parts['head_part'] = [k('head_top'), 
-                                  k('upper_neck'),
-                                  k('throax')]
-                                  
-            parts['lower_limb_part'] = [k('l_hip'),
-                                        k('r_hip'),
-                                        k('l_knee'),
-                                        k('r_knee'),
-                                        k('l_ankle'),
-                                        k('r_ankle'),
-                                        k('pelvis')]
-
-        if dataset_name == 'coco':
-            parts['head_part'] = [k('nose'), 
-                                  k('l_eye'),
-                                  k('r_eye'),
-                                  k('l_ear'),
-                                  k('r_ear'),]
-           
-            parts['lower_limb_part'] = [k('l_hip'),
-                                        k('r_hip'),
-                                        k('l_knee'),
-                                        k('r_knee'),
-                                        k('l_ankle'),
-                                        k('r_ankle'),] 
-    if parts_num == 8:
+        parts['upper_limb_part'] = [k('l_shoulder'),k('r_shoulder'),k('l_elbow'),k('r_elbow'),k('l_wrist'),k('r_wrist')]
         
         if dataset_name == 'mpii':
-       
-            parts['head_shoulder_part'] = [ k('head_top'), 
-                                            k('upper_neck'),
-                                            k('throax'),
-                                            k('l_shoulder'),
-                                            k('r_shoulder') ]
-            parts['upper_legs_part'] = [k('l_hip'), 
-                                        k('pelvis'), 
-                                        k('r_hip'),
-                                        k('l_knee'),
-                                        k('r_knee')]
+            parts['head_part'] = [k('head_top'), k('upper_neck'),  k('throax')]                  
+            parts['lower_limb_part'] = [k('l_hip'), k('r_hip'), k('l_knee'), k('r_knee'), k('l_ankle'), k('r_ankle'), k('pelvis')]
+        if dataset_name == 'coco':
+            parts['head_part'] =  [k('nose'), k('l_eye'),k('r_eye'),k('l_ear'),k('r_ear'),]
+            parts['lower_limb_part'] = [k('l_hip'),k('r_hip'), k('l_knee'), k('r_knee'),k('l_ankle'),k('r_ankle'),] 
+
+    if parts_num == 5:
+
+        parts['left_arm_part'] = [k('l_elbow') ,k('l_wrist')]
+        parts['right_arm_part'] = [k('r_elbow'), k('r_wrist')]
+        parts['legs_part'] = [k('l_knee'),k('r_knee'),k('l_ankle'),k('r_ankle')]
+
+        if dataset_name == 'mpii':
+            parts['head_shoulder_part'] = [k('head_top'),k('upper_neck'),k('throax'),k('l_shoulder'),k('r_shoulder') ]
+            parts['hips_part'] = [k('pelvis'), k('l_hip'), k('r_hip')]   
+        
+        if dataset_name == 'coco':
+            parts['head_shoulder_part'] = [k('nose'), k('l_eye'),k('r_eye'),k('l_ear'),k('r_ear'), k('l_shoulder'),k('r_shoulder') ]
+            parts['hips_part'] = [k('l_hip'), k('r_hip')] 
+
+    if parts_num == 8:
+        
+        parts['left_upper_arm_part'] = [k('l_shoulder'),k('l_elbow')]
+        parts['right_upper_arm_part'] = [k('r_shoulder'),k('r_elbow') ]
+        parts['left_lower_arm_part'] = [k('l_elbow'),k('l_wrist')]
+        parts['right_lower_arm_part'] = [k('r_elbow'),k('r_wrist')]
+        parts['left_lower_leg_part'] = [k('l_knee'), k('l_ankle')]
+        parts['right_lower_leg_part'] = [k('r_knee'),k('r_ankle')]
+        
+        if dataset_name == 'mpii':
+            parts['head_shoulder_part'] = [k('head_top'),k('upper_neck'),k('throax'),k('l_shoulder'),k('r_shoulder') ]
+            parts['upper_legs_part'] = [k('l_hip'),k('pelvis'),k('r_hip'),k('l_knee'),k('r_knee')]
         if dataset_name =='coco':      
-
-            parts['head_shoulder_part'] = [ k('nose'), 
-                                            k('l_eye'),
-                                            k('r_eye'),
-                                            k('l_ear'),
-                                            k('r_ear'),
-                                            k('l_shoulder'),
-                                            k('r_shoulder') ]
-
-            parts['upper_legs_part'] = [k('l_hip'),  
-                                        k('r_hip'),
-                                        k('l_knee'),
-                                        k('r_knee')]   
-
-        parts['left_upper_arm_part'] = [k('l_shoulder'),
-                                        k('l_elbow')]
-
-        parts['right_upper_arm_part'] = [k('r_shoulder'), 
-                                         k('r_elbow') ]
-
-        parts['left_lower_arm_part'] = [k('l_elbow'), 
-                                        k('l_wrist')]
-        parts['right_lower_arm_part'] = [k('r_elbow'), 
-                                        k('r_wrist')]
-
-        parts['left_lower_leg_part'] = [k('l_knee'),
-                                        k('l_ankle')]
-
-        parts['right_lower_leg_part'] = [k('r_knee'),
-                                        k('r_ankle')]
+            parts['head_shoulder_part'] = [ k('nose'),k('l_eye'),k('r_eye'),k('l_ear'),k('r_ear'),k('l_shoulder'),k('r_shoulder') ]
+            parts['upper_legs_part'] = [k('l_hip'),k('r_hip'),k('l_knee'),k('r_knee')]   
 
     return parts
-            
-                                    
-
-# parts={}
-
-# parts['head_shoulder_part'] = ( k('head_top'), k('upper_neck'),k('throax'),k('l_shoulder'),k('r_shoulder') )
-
-# parts['left_upper_arm_part'] = (k('l_shoulder'),k('l_elbow'))
-# parts['right_upper_arm_part'] = ( k('r_shoulder'), k('r_elbow') )
-
-# parts['left_lower_arm_part'] = ( k('l_elbow'), k('l_wrist'))
-# parts['right_lower_arm_part'] = ( k('r_elbow'), k('r_wrist'))
-
-# parts['left_torso_part'] = (k('l_shoulder'), k('l_hip'))
-# parts['right_torso_part'] = (k('r_shoulder'), k('r_hip'))
-
-# parts['waist_part'] = (k('l_hip'), k('pelvis'), k('r_hip'))
-
-# parts['left_upper_leg_part'] = (k('l_hip'),k('l_knee'))
-# parts['right_upper_leg_part'] = (k('r_hip'),k('r_knee'))
-
-# parts['left_lower_leg_part'] = (k('l_knee'),k('l_ankle'))
-# parts['right_lower_leg_part'] = (k('r_knee'),k('r_ankle'))

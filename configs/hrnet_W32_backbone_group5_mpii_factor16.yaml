@@ -1,24 +1,86 @@
+HRNET:
+  MODEL:
+    INIT_WEIGHTS: true
+    NAME: pose_hrnet
+    NUM_JOINTS: 16
+    PRETRAINED: '/data/pretrained_model/hrnet_w32-36af842e.pth'
+    TARGET_TYPE: gaussian
+    IMAGE_SIZE:
+    - 256
+    - 256
+    HEATMAP_SIZE:
+    - 64
+    - 64
+    SIGMA: 2
+    EXTRA:
+      PRETRAINED_LAYERS:
+      - 'conv1'
+      - 'bn1'
+      - 'conv2'
+      - 'bn2'
+      - 'layer1'
+      - 'transition1'
+      - 'stage2'
+      - 'transition2'
+      - 'stage3'
+      - 'transition3'
+      - 'stage4'
+      FINAL_CONV_KERNEL: 1
+      STAGE2:
+        NUM_MODULES: 1
+        NUM_BRANCHES: 2
+        BLOCK: BASIC
+        NUM_BLOCKS:
+        - 4
+        - 4
+        NUM_CHANNELS:
+        - 32
+        - 64
+        FUSE_METHOD: SUM
+      STAGE3:
+        NUM_MODULES: 4
+        NUM_BRANCHES: 3
+        BLOCK: BASIC
+        NUM_BLOCKS:
+        - 4
+        - 4
+        - 4
+        NUM_CHANNELS:
+        - 32
+        - 64
+        - 128
+        FUSE_METHOD: SUM
+      STAGE4:
+        NUM_MODULES: 3
+        NUM_BRANCHES: 4
+        BLOCK: BASIC
+        NUM_BLOCKS:
+        - 4
+        - 4
+        - 4
+        - 4
+        NUM_CHANNELS:
+        - 32
+        - 64
+        - 128
+        - 256
+        FUSE_METHOD: SUM
+
 model:
     use_pretrained: false
     pretrained: ''
     use_backbone: True
     frozen_resnet: False
     frozen_mobilenet: False
-    backbone_net_name: 'resnet'  # or 'meta_arch' or 'mobilenet_v2'
-    backbone_layers: 50 #resnet
-    backbone_feature_num: 4 # resnet
-    backbone_pretrained_path: '/path_to_your_pretrained_model/resnet50-19c8e357.pth'
-    init_weights: True
+    backbone_net_name: 'hrnet'  # or 'meta_arch' or 'mobilenet_v2'
 
-    dataset_name: 'coco'  # 'mpii'
-    keypoints_num: 17  # coco:17, mpii:16
-
-
-    input_size: # coco: w:h=3:4  mpii: w:h=1:1
-        w: 192
+    dataset_name: 'mpii'
+    keypoints_num: 16
+    input_size:
+        w: 256
         h: 256
     heatmap_size:
-        w: 48
+        w: 64
         h: 64
 
     margin_to_border: 1.25 # >=1
@@ -43,34 +105,32 @@ model:
 
     subnetwork_config:
 
-        dataset_name: 'coco' # 'mpii'
-        parts_num : 3
+        dataset_name: 'mpii'
+        parts_num : 5
         cell_config:
             
             one-shot-search: True
             ##### vector representation
-            vector_in_pixel : True
+            vector_in_pixel : False
             vector_dim: 8
             convolution_mode: '2D'
             ##### vector representation
 
             search_alpha: true
             search_beta: true
-            operators: ["zero", "skip_connect","Atr_Conv_3x3", "Sep_Conv_3x3"]  #'conv_3x3'] # "Atr_Conv_3x3"
+            operators: ["Zero", "skip_connect","Atr_Conv_3x3", "Sep_Conv_3x3"]  #'conv_3x3'] # "Atr_Conv_3x3"
  
-            depth: 7
-            cut_layers_num: 4  # first several layers
+            depth: 6
+            cut_layers_num: 3  # first several layers
             size_types: [4,8,16,32]
             hidden_states_num: 1
             factor: 16
             input_nodes_num: 1
 
 
-images_root_dir: '/path_to_your/coco/images/'  # /path_to_your/mpii/images/'
-annotation_root_dir: '/data/dataset/coco/annotations/' # /path_to_your/mpii/annot/'
-person_detection_results_path: '/path_to_your/coco/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'
-                                 # /path_to_your/mpii/annot/
-                                 
+images_root_dir: '/data/dataset/mpii/images/'
+annotation_root_dir: '/data/dataset/mpii/annot/'
+person_detection_results_path: '/data/dataset/mpii/annot/'
 #COCO_test-dev2017_detections_AP_H_609_person
 #COCO_val2017_detections_AP_H_56_person.json
 
@@ -81,50 +141,49 @@ train:
     arch_search_strategy: sync # 'first_order_gradient','random','None','second_order_gradient'
     arch_search_epoch: 0
     arch_search_weight_optimization_flag: false # this need more consideration
-
-
     epoch_begin: 0
     epoch_end: 200
 
     w_optim_name: 'Adam'
     w_momentum: 0.9
-    
-
-    # FOR MultiStepLR
-    scheduler_name: MultiStepLR  #MultiStepLR # CosineAnnealingLR
-    LR_STEP: [90, 120, 150]
-    LR_FACTOR: 0.25
-    
-    # CosineAnnealingLR
     w_lr_cosine_begin: 0.001
     w_lr_cosine_end : 0.00005
-    
-    ### Darts
+    w_weight_decay: 0.0003
+
+    # FOR MultiStepLR
+    scheduler_name: MultiStepLR  #MultiStepLR
+    LR_STEP: [90, 120, 150]
+
+    LR_FACTOR: 0.25
+
     # two values below make the trainset splited by split_for_train/split_for_archvalid
+    
     split_for_train: 2
     split_for_archvalid: 1
-    
+
     arch_optim_name: 'Adam'
     arch_lr: 0.03
     arch_weight_decay: 0.01
-    ###
-    
-    heatmap_peak_sigma_factor: 2 # 3
+
+    heatmap_peak_sigma_factor: 2
 
     augmentation: true
     aug_scale: 0.30
     aug_rotation: 45
     aug_flip: true
-    
-    aug_occlusion: false # NOT USED IN PAPER
+    aug_occlusion: false
     occlusion_prob: 0.5
     occlusion_size: [25,25]
     occlusion_nums: 3
 
+    # extra
+    mask_loss_weight: 0.5
+
+
 test:
     
     dataset_name: 'val' # 'val' or 'test'
-    batchsize: 128
+    batchsize: 64
 
     bbox_score_threshold: 0.0
     confidence_threshold: 0.2
@@ -132,3 +191,5 @@ test:
 
     flip_test: true
     ckpt: ''
+
+

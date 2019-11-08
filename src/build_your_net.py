@@ -1,4 +1,4 @@
-#from thop import profile
+from thop import profile
 import torch
 
 from .architecture.meta_arch import Meta_Arch
@@ -7,8 +7,7 @@ from .network_factory.subnetwork import Sub_Arch
 from .network_factory.resnet_feature import BackBone_ResNet
 from .network_factory.mobilenet_v2_feature import  BackBone_MobileNet
 from .network_factory.part_representation import Body_Part_Representation
-# from .network_factory.meta_pose_capsule_embedding import Meta_Pose_Capsule_Embedding
-# from .network_factory.meta_pose_squashing import Meta_Pose_Squash
+from .network_factory.pose_hrnet import BackBone_HRNet
 
 from utils import  get_model_summary
 
@@ -30,6 +29,8 @@ def bulid_up_network(config,criterion):
         logger.info("backbone:{}".format(config.model.backbone))
         backbone = Backbone_Arch(criterion,**config.model.backbone)
 
+    if config.model.backbone_net_name=="hrnet":
+        backbone = BackBone_HRNet(config,is_train=True)
        
     Arch = Body_Part_Representation(config.model.keypoints_num,  criterion, backbone, **config.model.subnetwork_config)
 
@@ -45,11 +46,13 @@ def bulid_up_network(config,criterion):
     logger.info("\n\nwhole architecture: params and flops")
     logger.info(get_model_summary(Arch,torch.randn(1, 3, config.model.input_size.h,config.model.input_size.w)))
 
-    # flops, params = profile( backbone, input_size=(1, 3, config.model.input_size.h,config.model.input_size.w),  )
-    # logger.info(">>> total params of BackBone: {:.2f}M\n>>> total FLOPS of Backbone: {:.3f} G\n".format(
-    #                 (params / 1000000.0),(flops / 1000000000.0)))
-    # flops, params = profile(Arch, input_size=(1, 3, config.model.input_size.h,config.model.input_size.w),  )
-    # logger.info(">>> total params of Whole Model: {:.2f}M\n>>> total FLOPS of Model: {:.3f} G\n".format(
-    #                     (params / 1000000.0),(flops / 1000000000.0)))
+    logger.info("=========== thop statistics ==========")
+    dump = torch.randn(1, 3, config.model.input_size.h,config.model.input_size.w)
+    flops, params = profile( backbone, inputs=(dump,),  )
+    logger.info(">>> total params of BackBone: {:.2f}M\n>>> total FLOPS of Backbone: {:.3f} G\n".format(
+                    (params / 1000000.0),(flops / 1000000000.0)))
+    flops, params = profile(Arch, inputs=(dump,),  )
+    logger.info(">>> total params of Whole Model: {:.2f}M\n>>> total FLOPS of Model: {:.3f} G\n".format(
+                        (params / 1000000.0),(flops / 1000000000.0)))
 
     return Arch

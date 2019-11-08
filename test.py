@@ -74,6 +74,7 @@ def main():
  
     config = edict( yaml.load( open(arg.cfg,'r')))
 
+    config.test.dataset_name = arg.dataset
     config.test.flip_test = arg.flip_test
     config.test.batchsize = 128
     config.model.margin_to_border = arg.margin

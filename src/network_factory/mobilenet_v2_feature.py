@@ -159,6 +159,9 @@ class MobileNetV2(nn.Module):
             assert os.path.exists(pretrained), "{} does not exist".format(pretrained)
             pretrained_state_dict = torch.load(pretrained)
             logger.info('==> NOTE: loading mobilenet_v2 pretrained model {}'.format(pretrained))
+            for i in pretrained_state_dict:
+                if i not in self.state_dict():
+                    logger.info(":: {} is not loaded".format(i))
             self.load_state_dict(pretrained_state_dict, strict=False)
         else: 
             logger.info('=> no mobilenet_v2 imagenet pretrained model! please download in https://drive.google.com/open?id=1jlto6HRVD3ipNkAl1lNhDbkBp7HylaqR')

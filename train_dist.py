@@ -70,8 +70,8 @@ def args():
 
 def logging_set(output_dir,local_rank=None):
     if local_rank is not None:
-        logging.basicConfig(filename = os.path.join(output_dir,'train_{}.log'.format(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))),
-                    format = '[{}]%(message)s'.format(local_rank))
+        logging.basicConfig(filename = os.path.join(output_dir,'train_{}_rank{}.log'.format(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'),local_rank)),
+                    format = '[#{}]%(message)s'.format(local_rank))
     else:
         logging.basicConfig(filename = os.path.join(output_dir,'train_{}.log'.format(datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))),
                     format = '%(message)s')

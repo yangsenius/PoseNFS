@@ -1,29 +1,29 @@
 model:
-    use_pretrained: false # Flag for the whole model, default False
-    pretrained: '' # The path to the whole pretrained model
+    use_pretrained: false
+    pretrained: ''
     use_backbone: True
     frozen_resnet: False
     frozen_mobilenet: False
-    backbone_net_name: 'resnet'  # or 'meta_arch' or 'mobilenet_v2'
-    backbone_layers: 50 # Only when using resnet
+    backbone_net_name: 'mobilenet_v2'  # or 'meta_arch' or 'mobilenet_v2'
+    #backbone_layers: 50 #resnet
     backbone_feature_num: 4 # resnet
-    backbone_pretrained_path: '/path_to_your_pretrained_backbone/resnet50-19c8e357.pth'
+    backbone_pretrained_path: '/path_to_your_pretrained_backbone/mobilenet_v2.pth.tar'
     init_weights: True
 
-    dataset_name: 'coco'  # 'mpii'
-    keypoints_num: 17  # coco:17, mpii:16
+    dataset_name: 'coco'
+    keypoints_num: 17
 
 
-    input_size: # coco: w:h=3:4  mpii: w:h=1:1
-        w: 192
-        h: 256
+    input_size:
+        w: 288
+        h: 384
     heatmap_size:
-        w: 48
-        h: 64
+        w: 72
+        h: 96
 
     margin_to_border: 1.25 # >=1
-
-    # Only when using an extra mask module branch, NOT USED IN THE PAPER
+    
+    #Only when using an extra mask module branch, NOT USED IN THE PAPER
     use_mask: false
     mask_num: 0
 
@@ -38,38 +38,35 @@ model:
         depth: 12
         size_types: [4,8,16,32]
         hidden_states_num: 1
-        factor: 10
+        factor: 8
         input_nodes_num: 1
 
     subnetwork_config:
 
-        dataset_name: 'coco' # 'mpii'
+        dataset_name: 'coco'
         parts_num : 3
         cell_config:
-            
-            one-shot-search: True
-            ##### vector representation
+
             vector_in_pixel : True
             vector_dim: 8
             convolution_mode: '2D'
-            ##### vector representation
 
             search_alpha: true
             search_beta: true
-            operators: ["Zero", "skip_connect","Atr_Conv_3x3", "Sep_Conv_3x3"]  #'conv_3x3'] # "Atr_Conv_3x3"
- 
-            depth: 7
-            cut_layers_num: 4  # first several layers
+            operators: [ "skip_connect", "Sep_Conv_3x3", "Atr_Conv_3x3",]
+
+            depth: 6
+            cut_layers_num: 3  # first several layers
             size_types: [4,8,16,32]
             hidden_states_num: 1
             factor: 16
             input_nodes_num: 1
 
 
-images_root_dir: '/path_to_your/coco/images/'  # /path_to_your/mpii/images/'
-annotation_root_dir: '/path_to_your/coco/annotations/' # /path_to_your/mpii/annot/'
+images_root_dir: '/path_to_your/coco/images/' 
+annotation_root_dir: '/path_to_your/coco/annotations/' 
 person_detection_results_path: '/path_to_your/coco/person_detection_results/COCO_val2017_detections_AP_H_56_person.json'
-                                 # /path_to_your/mpii/annot/
+                            
                                  
 #COCO_test-dev2017_detections_AP_H_609_person
 #COCO_val2017_detections_AP_H_56_person.json

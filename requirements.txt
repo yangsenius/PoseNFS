@@ -1,5 +1,3 @@
-torch (version >=1.0.0)
-torchvision
 opencv-python
 pycocotools
 scipy

@@ -3,7 +3,7 @@ HRNET:
     INIT_WEIGHTS: true
     NAME: pose_hrnet
     NUM_JOINTS: 16
-    PRETRAINED: '/data/pretrained_model/hrnet_w32-36af842e.pth'
+    PRETRAINED: '/path_to_your_pretrained_backbone/hrnet_w32-36af842e.pth'
     TARGET_TYPE: gaussian
     IMAGE_SIZE:
     - 256
@@ -128,9 +128,9 @@ model:
             input_nodes_num: 1
 
 
-images_root_dir: '/data/dataset/mpii/images/'
-annotation_root_dir: '/data/dataset/mpii/annot/'
-person_detection_results_path: '/data/dataset/mpii/annot/'
+images_root_dir: '/path_to_your_dataset/mpii/images/'
+annotation_root_dir: '/path_to_your_dataset/mpii/annot/'
+person_detection_results_path: '/path_to_your_dataset/mpii/annot/'
 #COCO_test-dev2017_detections_AP_H_609_person
 #COCO_val2017_detections_AP_H_56_person.json
 

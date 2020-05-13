@@ -6,7 +6,7 @@ Neural architecture search space at macro and micro level:
 
 <img src="https://senyang-ml.github.io/2019/08/26/Pose-Neural-Fabrics-Search/cell-based_fabric.jpg" width="40%"><img src="https://senyang-ml.github.io/2019/08/26/Pose-Neural-Fabrics-Search/cell.jpg" width="60%">
 
-Search part-specific Cell-based Neural Fabrics (CNFs) with the guide of prior knowledge of human body structure. 
+Search part-specific Cell-based Neural Fabrics (CNFs) with the guide of the prior knowledge of human body structure. 
 
 <img src="https://senyang-ml.github.io/2019/08/26/Pose-Neural-Fabrics-Search/pnfs_framework.jpg" width="100%">
 
@@ -14,7 +14,7 @@ Search part-specific Cell-based Neural Fabrics (CNFs) with the guide of prior kn
 
 ### Dependencies
 
-Install PyTorch (>=1.0.0) and the packages mentioned in [`requirements.txt`](requirements.txt) by `pip install -r requirements.txt`.
+Install `PyTorch` (>=1.0.0) and the packages mentioned in [`requirements.txt`](requirements.txt) by `pip install -r requirements.txt`.
 
 ### Data Preparation
 We follow the steps of [this repository](https://github.com/microsoft/human-pose-estimation.pytorch) for preparing `MPII` and `COCO` dataset, please see the [https://github.com/microsoft/human-pose-estimation.pytorch#data-preparation](https://github.com/microsoft/human-pose-estimation.pytorch#data-preparation).
@@ -63,7 +63,7 @@ python test.py \
 --cfg configs/mobilenet_v2_CNFx3_coco_384x288.yaml \
 --exp_name o/mobile_cnf3_coco/ \
 --gpu 0,1 \
---test_model /path_to/mobilenet_v2.pth.tar \
+--test_model /path_to/mobilenet-v2_nfx3_384x288_coco_ckpt.tar \
 --flip_test 
 ```
 

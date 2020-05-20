@@ -72,22 +72,24 @@ from architecture.meta_arch import Meta_Arch
 def Prune_the_Useless_Cells(arch):
 
     for name, cnf in arch.named_modules():
-        if not isinstance(cnf, Meta_Arch): #hasattr(cnf, 'betas'): # prune all the useless cells in the `Sub_Arch` module (subnetworks, CNFs)
+        # hasattr(cnf, 'betas'): # prune all the useless cells in the `Sub_Arch` module (subnetworks, CNFs)
+        if not isinstance(cnf, Meta_Arch): 
             continue
         depth = cnf.arch_depth
         betas = F.softmax(cnf.betas,dim=-1) # [cells_num, 3]
         Num = cnf.Num.copy() # not change the original num
         cells_num = cnf.cells_num
         if sum(Num) != cells_num:
-            Num[cnf.cut_layers_num - 1] = 0 # in part_representation, we add the number of backbone feature pyrmiads in the cut layer
+            # in part_representation, we add the number of backbone feature pyrmiads in the cut layer position
+            Num[cnf.cut_layers_num - 1] = 0 
         useful_cell_positions = []
         useful_cell_ids = []
         id = 0
         logger.info(betas)
         # if a cell is useful for comptuing, 
-        # we must find one path to the final cell with non-zero associated beta values
-        # so we need to make judgement from the final cell to the previous layers by reverse order
-        # if the cell is connected a useful cell in a next layer, it will be useful
+        # we must find one path from it to the final cell with non-zero associated beta values.
+        # so we need to make judgement from the final layer to the previous layers by the reverse 'cell_id' order
+        # if the cell is connected by a useful cell in the next layer, it will be useful
         for pos_j_, num in enumerate(Num[::-1]): # Reverse order
             # num==0: the layer has no cells
             if num ==0: 
@@ -115,7 +117,7 @@ def Prune_the_Useless_Cells(arch):
                         if associated_cell_is_useful(x, y, t, 
                                                     pos_i, pos_j, cell_id, 
                                                     useful_cell_positions, useful_cell_ids, betas):
-                            # once a associated cell is useful, this cell is useful
+                            # once the cell associated it is useful, then this cell is regarded as useful
                             # so do not prune this cell
                             prune_the_cell = False
                             break

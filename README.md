@@ -17,6 +17,7 @@ Search part-specific Cell-based Neural Fabrics (CNFs) with the guide of the prio
 Install `PyTorch` (>=1.0.0) and the packages mentioned in [`requirements.txt`](requirements.txt) by `pip install -r requirements.txt`.
 
 ### Data Preparation
+
 We follow the steps of [this repository](https://github.com/microsoft/human-pose-estimation.pytorch) for preparing `MPII` and `COCO` dataset, please see the [https://github.com/microsoft/human-pose-estimation.pytorch#data-preparation](https://github.com/microsoft/human-pose-estimation.pytorch#data-preparation).
 
 ### Download ImageNet Pretrained Models
@@ -25,7 +26,9 @@ We follow the steps of [this repository](https://github.com/microsoft/human-pose
 - MobileNet-V2 (1.3M): [Google Drive](https://drive.google.com/open?id=1jlto6HRVD3ipNkAl1lNhDbkBp7HylaqR) from [this repo](https://github.com/tonylins/pytorch-mobilenet-v2).
 - HRNet-W32-stem~stage3 (8.1M): [Google Drive](https://drive.google.com/drive/folders/1hOTihvbyIxsm5ygDpbUuJ7O_tzv4oXjC?usp=sharing) from [this repo](https://github.com/leoxiaobin/deep-high-resolution-net.pytorch). 
 - More ...
+
 ### Create the `o` directory to preserve each experiment's output 
+
 ```
 mkdir o  
 ```
@@ -76,20 +79,31 @@ other optional commands for testing
 --use_dt   // use the detection results of COCO val set or test-dev set
 ```
 
-### Detailed Settings
+## Update
+
+- [2020.5.20] Add the [**Prune**](src/architecture/model_prune.py) function 
+```python
+Arch=Prune(Arch, prune_cells=True, prune_operations=True)
+```
+to prune the useless cells and operations according to the architecture parameters. A new search result as below is obtained with *72.3 AP* performance with *15.9M* for *COCO test-dev2017*.
+
+<img src="part-specific-cnf5.png" alt="part-specific-cnf5" style="zoom:18%;" align="center" />
+
+
+## Detailed Settings
 
 All of the detailed settings of the model are recorded in the [`configs/*.yaml`](configs/).
 
 #### Configuration for Fabric-Subnetwork
 
 A snippet example of the `*.yaml` for the hyperparameters of subnetworks :
+
 ```yaml
 subnetwork_config:
 
   dataset_name: 'coco'
   parts_num : 3
   cell_config:
-  
       vector_in_pixel : True
       vector_dim: 8
       convolution_mode: '2D'
@@ -97,7 +111,6 @@ subnetwork_config:
       search_alpha: true
       search_beta: true
       operators: ["skip_connect", "Sep_Conv_3x3","Atr_Conv_3x3","max_pool_3x3"] # 
-
       depth: 7
       cut_layers_num: 4  # first several layers
       size_types: [4,8,16,32] # scales is [1/4, 1/8, 1/16, 1/32]
@@ -111,6 +124,7 @@ subnetwork_config:
 |--|--|--|--|
 |MobileNet-V2 + CNFx3|6.1M/4.0G|67.4-COCO Test-dev|[Google Drive](https://drive.google.com/drive/folders/1-GWqHDAwfVoPVaQPx30yPAdigC72FU4X)|
 |HRNet-W32-stem~stage3 + CNFx5|16.4M/9.4G|90.1-MPII Val-set|[Google Drive](https://drive.google.com/drive/folders/1-GWqHDAwfVoPVaQPx30yPAdigC72FU4X)|
+|HRNet-W32-stem~stage3 + CNFx5|15.9M/14.8G|72.3-COCO Test-dev|[Google Drive](https://drive.google.com/drive/folders/1-GWqHDAwfVoPVaQPx30yPAdigC72FU4X)|
 
 See the paper ([newly](https://senyang-ml.github.io/2019/08/26/Pose-Neural-Fabrics-Search/2019-pose_neural_fabrics_search.pdf)) or configs for more details.
 

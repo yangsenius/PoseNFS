@@ -1,14 +1,15 @@
 ## Introduction
 
+<img src="part-specific-cnf5.png" alt="part-specific-cnf5" width = "100%" align="center" >
+
+Search part-specific Cell-based Neural Fabrics (CNFs) with the guide of the prior knowledge of human body structure.
+
 This repository is our PyTorch implementation of the paper [Pose Neural Fabrics Search (PNFS)](https://arxiv.org/pdf/1909.07068.pdf) ([arXiv 1909.07068](https://arxiv.org/abs/1909.07068)).  
 
 Neural architecture search space at macro and micro level:
 
 <img src="https://senyang-ml.github.io/2019/08/26/Pose-Neural-Fabrics-Search/cell-based_fabric.jpg" width="40%"><img src="https://senyang-ml.github.io/2019/08/26/Pose-Neural-Fabrics-Search/cell.jpg" width="60%">
 
-Search part-specific Cell-based Neural Fabrics (CNFs) with the guide of the prior knowledge of human body structure. 
-
-<img src="https://senyang-ml.github.io/2019/08/26/Pose-Neural-Fabrics-Search/pnfs_framework.jpg" width="100%">
 
 ## Usage
 
@@ -81,14 +82,11 @@ other optional commands for testing
 
 ## Update
 
-- [2020.5.20] Add the [**Prune**](src/architecture/model_prune.py) function 
+- [2020.5.20] Add the [**Prune**](src/architecture/model_prune.py) function
 ```python
 Arch=Prune(Arch, prune_cells=True, prune_operations=True)
 ```
-to prune the useless cells and operations according to the architecture parameters. A new search result as below is obtained with *72.3 AP* performance with *15.9M* for *COCO test-dev2017*.
-
-<img src="part-specific-cnf5.png" alt="part-specific-cnf5" style="zoom:18%;" align="center" />
-
+to prune the useless cells and operations according to the architecture parameters. It doesn't sacrifice the precision and doesn't need to re-train. A new search result is obtained with *72.3 AP* performance with *15.9M* for *COCO test-dev2017*.
 
 ## Detailed Settings
 

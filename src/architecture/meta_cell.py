@@ -70,7 +70,9 @@ class Cell(nn.Module):
         c_p     :   the channel of hidden states in previous cell
         c_pp    :   the channel of hidden states in previous previous cell
 
-        input_nodes_num     :   the number of input_nodes = 2
+        input_nodes_num     :   the number of input_nodes = 1 
+                                :NOTE: two input nodes are setted in the trained models (the paper proposed), but one node is useless;
+                                       if you don't load the trained models from this repo, we recommend using 1 node to reduce useless parameters.
         hidden_states_num   :   the number of hidden_states = 2
        
     
@@ -92,7 +94,7 @@ class Cell(nn.Module):
     """
 
     def __init__(self,pos_i,pos_j, c,  c_prev_parallel, c_prev_above, c_prev_below , c_prev_prev ,hidden_states_num ,
-                                                        input_nodes_num = 2, 
+                                                        input_nodes_num = 1,  
                                                         skip = prev_prev_skip,
                                                         operators_used = ["zero"]):
         
